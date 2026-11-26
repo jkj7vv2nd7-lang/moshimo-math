@@ -128,6 +128,30 @@ h1,h2,h3{margin:0;}
 .topic-nav .tn-btn:disabled .tn-label{color:var(--ink-faint);}
 .topic-nav-top .tn-btn{min-height:46px; padding:6px 12px;}
 .scroll-hint{display:none; margin:0; font-size:12.5px; font-weight:700; color:var(--accent); text-align:center;}
+/* narration (v1.0.2) */
+.narration-bar{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.narrate-btn{
+  border:1.5px solid var(--accent); background:var(--accent); color:#fff;
+  font-size:14px; font-weight:800; padding:10px 16px; border-radius:11px; min-height:48px;
+}
+.narrate-stop-btn{
+  border:1.5px solid var(--line); background:#fff; color:var(--ink);
+  font-size:14px; font-weight:800; padding:10px 16px; border-radius:11px; min-height:48px;
+}
+.narrate-stop-btn:disabled{opacity:.4; cursor:default;}
+.narrate-status{font-size:12px; color:var(--ink-faint); font-weight:600;}
+/* stage labels (v1.0.2) */
+.stage-badge{
+  display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--accent);
+  border-radius:999px; padding:3px 10px; margin-bottom:6px; margin-left:6px;
+}
+.stage-chip{
+  display:inline-block; font-size:10.5px; font-weight:800; color:var(--accent);
+  background:var(--accent-soft); border-radius:6px; padding:1px 6px; margin-right:6px;
+}
+.tree .stage-block{margin-bottom:14px;}
+.tree .stage-name{font-size:12.5px; font-weight:800; color:var(--accent); margin-bottom:6px;}
+.pill-group .pg-name.stage{color:var(--accent);}
 .canvas-wrap{position:relative; width:100%; height:320px;}
 #simCanvas{display:block; width:100%; height:100%;}
 .kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
@@ -252,6 +276,18 @@ body[data-device="mobile"] .layout{
 body[data-device="mobile"] .pillbar{display:none;}
 body[data-device="mobile"] .bottomtabs{display:grid;}
 body[data-device="mobile"] .footer-note{padding-bottom:84px;}
+/* v1.0.2: 実験の並びを Canvas → スライダー → KPI にし、Canvas を上部に固定する */
+body[data-device="mobile"] .topic-nav-top{order:1;}
+body[data-device="mobile"] .topic-head{order:2;}
+body[data-device="mobile"] .narration-bar{order:3;}
+body[data-device="mobile"] .canvas-card{
+  order:4; position:sticky; top:calc(var(--header-h,60px) + 6px); z-index:30;
+  box-shadow:0 8px 20px rgba(15,23,42,.14);
+}
+body[data-device="mobile"] .scroll-hint{order:5;}
+body[data-device="mobile"] .sliders-card{order:6;}
+body[data-device="mobile"] .kpis{order:7;}
+body[data-device="mobile"] .topic-nav-bottom{order:8;}
 body[data-device="mobile"] .canvas-wrap{height:210px;}
 body[data-device="mobile"] .scroll-hint{display:block;}
 body[data-device="mobile"] .brand h1{font-size:18px;}
@@ -278,6 +314,18 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   body[data-device="auto"] .pillbar{display:none;}
   body[data-device="auto"] .bottomtabs{display:grid;}
   body[data-device="auto"] .footer-note{padding-bottom:84px;}
+  /* v1.0.2: 実験の並びを Canvas → スライダー → KPI にし、Canvas を上部に固定する */
+  body[data-device="auto"] .topic-nav-top{order:1;}
+  body[data-device="auto"] .topic-head{order:2;}
+  body[data-device="auto"] .narration-bar{order:3;}
+  body[data-device="auto"] .canvas-card{
+    order:4; position:sticky; top:calc(var(--header-h,60px) + 6px); z-index:30;
+    box-shadow:0 8px 20px rgba(15,23,42,.14);
+  }
+  body[data-device="auto"] .scroll-hint{order:5;}
+  body[data-device="auto"] .sliders-card{order:6;}
+  body[data-device="auto"] .kpis{order:7;}
+  body[data-device="auto"] .topic-nav-bottom{order:8;}
   body[data-device="auto"] .canvas-wrap{height:210px;}
   body[data-device="auto"] .scroll-hint{display:block;}
   body[data-device="auto"] .brand h1{font-size:18px;}
@@ -302,7 +350,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
 <header class="app-header">
   <div class="brand">
     <h1>モシモ・マス</h1>
-    <span class="version">v1.0.1</span>
+    <span class="version">v1.0.2</span>
   </div>
   <span class="explored-badge" id="exploredBadge">0/18 実験</span>
   <div class="header-controls">
@@ -328,19 +376,24 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
       <button type="button" class="tn-btn tn-next" id="nextBtnTop"><span class="tn-label">次の単元 →</span><span class="tn-title"></span></button>
     </nav>
     <div class="card topic-head" id="topicHead"></div>
-    <div class="card">
+    <div class="card narration-bar">
+      <button type="button" class="narrate-btn" id="narrateBtn">🔊 解説を読み上げ</button>
+      <button type="button" class="narrate-stop-btn" id="narrateStopBtn" disabled>⏹ 停止</button>
+      <span class="narrate-status" id="narrateStatus" aria-live="polite"></span>
+    </div>
+    <div class="card canvas-card">
       <div class="canvas-wrap" id="canvasWrap"><canvas id="simCanvas"></canvas></div>
     </div>
     <p class="scroll-hint">👇 下の「実験スライダー」を動かして実験しよう</p>
     <div class="kpis" id="kpiGrid" aria-live="polite"></div>
-    <div class="card">
+    <div class="card sliders-card">
       <div class="sliders-head">
         <h3>実験スライダー</h3>
         <button type="button" class="link-btn" id="resetParamsBtn">初期値に戻す</button>
       </div>
       <div id="sliderBox"></div>
     </div>
-    <nav class="topic-nav" aria-label="前後の単元">
+    <nav class="topic-nav topic-nav-bottom" aria-label="前後の単元">
       <button type="button" class="tn-btn" id="prevBtnBottom"><span class="tn-label">← 前の単元</span><span class="tn-title"></span></button>
       <button type="button" class="tn-btn tn-next" id="nextBtnBottom"><span class="tn-label">次の単元 →</span><span class="tn-title"></span></button>
     </nav>
@@ -372,7 +425,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   </aside>
 </main>
 
-<p class="footer-note">モシモ・マス v1.0.1｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
+<p class="footer-note">モシモ・マス v1.0.2｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
 
 <nav class="bottomtabs" id="bottomTabs" aria-label="モバイルタブ">
   <button type="button" data-tab-btn="lab" aria-pressed="true">実験</button>
@@ -407,6 +460,8 @@ const TOPICS = [
   // --- 1. 数と式 ---
   {
     id: 'num_discount',
+    stage: '中1',
+    stageOrder: 1,
     field: 'num',
     title: 'コンビニ割引クーポン対決',
     unit: '割合・比・文字式・一次不等式',
@@ -487,6 +542,8 @@ const TOPICS = [
   },
   {
     id: 'num_sqrt_complex',
+    stage: '数II',
+    stageOrder: 6,
     field: 'num',
     title: '面積と回転の数：√2から虚数 i へ',
     unit: '平方根・無理数・複素数（iの回転）',
@@ -551,6 +608,8 @@ const TOPICS = [
   },
   {
     id: 'num_factor',
+    stage: '中3',
+    stageOrder: 3,
     field: 'num',
     title: '面積パズルで因数分解＆スマホプラン',
     unit: '展開・因数分解・二次方程式',
@@ -606,6 +665,8 @@ const TOPICS = [
   // --- 2. 図形 ---
   {
     id: 'geo_pythagoras',
+    stage: '中3',
+    stageOrder: 3,
     field: 'geo',
     title: 'スマホ・TV画面インチと三平方の定理',
     unit: '平面図形・相似比・三平方の定理',
@@ -662,6 +723,8 @@ const TOPICS = [
   },
   {
     id: 'geo_trig',
+    stage: '数I',
+    stageOrder: 4,
     field: 'geo',
     title: '観覧車の高さ＆波（sin・cos・tan）',
     unit: '三角比・三角関数・単位円',
@@ -732,6 +795,8 @@ const TOPICS = [
   },
   {
     id: 'geo_vector',
+    stage: '数B',
+    stageOrder: 7,
     field: 'geo',
     title: 'ドローンの風合成＆ベクトル操作',
     unit: '平面ベクトル・空間ベクトル・内積',
@@ -796,6 +861,8 @@ const TOPICS = [
   // --- 3. 変化と関係 ---
   {
     id: 'chg_linear',
+    stage: '中2',
+    stageOrder: 2,
     field: 'chg',
     title: 'サブスク元取り＆お風呂の水張り',
     unit: '比例・反比例・一次関数',
@@ -859,6 +926,8 @@ const TOPICS = [
   },
   {
     id: 'chg_quad',
+    stage: '中3〜数I',
+    stageOrder: 3.5,
     field: 'chg',
     title: 'バスケシュート＆車のブレーキ距離',
     unit: '二次関数 y=ax²・放物線・最大最小',
@@ -921,6 +990,8 @@ const TOPICS = [
   },
   {
     id: 'chg_exp_calc',
+    stage: '数II',
+    stageOrder: 6,
     field: 'chg',
     title: 'SNSバズ＆複利貯金の指数爆発',
     unit: '指数・対数・数列・微分積分',
@@ -983,6 +1054,8 @@ const TOPICS = [
   // --- 4. データと確からしさ ---
   {
     id: 'dat_dist',
+    stage: '中2〜数I',
+    stageOrder: 2.5,
     field: 'dat',
     title: 'テスト点数分布＆平均のワナ（外れ値）',
     unit: '代表値・箱ひげ図・標準偏差・正規分布',
@@ -1056,6 +1129,8 @@ const TOPICS = [
   },
   {
     id: 'dat_prob',
+    stage: '数A',
+    stageOrder: 5,
     field: 'dat',
     title: '推しライブ当選確率＆ガチャ期待値',
     unit: '場合の数・確率・余事象・期待値',
@@ -1113,6 +1188,8 @@ const TOPICS = [
   },
   {
     id: 'dat_stat',
+    stage: '数B',
+    stageOrder: 7,
     field: 'dat',
     title: 'コインのイカサマ検定（仮説検定）',
     unit: '標本調査・仮説検定・p値',
@@ -1189,6 +1266,8 @@ const TOPICS = [
   // --- 5. 論証 ---
   {
     id: 'log_cond',
+    stage: '数I',
+    stageOrder: 4,
     field: 'log',
     title: '必要条件・十分条件ベン図スイッチ',
     unit: '集合と命題・必要十分条件',
@@ -1243,6 +1322,8 @@ const TOPICS = [
   },
   {
     id: 'log_induct',
+    stage: '数B',
+    stageOrder: 7,
     field: 'log',
     title: 'ドミノ倒し実験（数学的帰納法）',
     unit: '図形の証明・背理法・数学的帰納法',
@@ -1299,6 +1380,8 @@ const TOPICS = [
   },
   {
     id: 'log_algo',
+    stage: '数A',
+    stageOrder: 5,
     field: 'log',
     title: '迷路の最短ルート＆アルゴリズム論理',
     unit: '離散数学・論理的思考・情報科連携',
@@ -1363,6 +1446,8 @@ const TOPICS = [
   // --- 6. 社会を読み解く数学（新設分野） ---
   {
     id: 'soc_matrix',
+    stage: '発展',
+    stageOrder: 8,
     field: 'soc',
     title: '行列で画像を回転＆拡大（AI・CG）',
     unit: '行列（新指導要領 統合科目）・線形変換',
@@ -1429,6 +1514,8 @@ const TOPICS = [
   },
   {
     id: 'soc_sir',
+    stage: '発展',
+    stageOrder: 8,
     field: 'soc',
     title: '流行・SNS噂のピークアウト予測',
     unit: '社会を読み解く数学・微分モデル',
@@ -1497,6 +1584,8 @@ const TOPICS = [
   },
   {
     id: 'soc_opt',
+    stage: '数II',
+    stageOrder: 6,
     field: 'soc',
     title: '文化祭模擬店の価格＆利益最大化',
     unit: '社会を読み解く数学・最適化・線形計画',
@@ -1602,6 +1691,21 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     { id: "h1", label: "高1" },
     { id: "h2_h3", label: "高2〜高3" }
   ];
+
+  /* ===== 履修順（v1.0.2） =====
+     カタログ表示と前へ／次への巡回は、中学→高校の学習順（stageOrder 昇順、
+     同順位は topics.js の元の並び）に並べ替えた orderedTopics を使う。
+     単元ID・データ・計算・描画・保存済みパラメータには影響しない。 */
+  var orderedTopics = topics.slice().sort(function(a, b){
+    var ra = (typeof a.stageOrder === "number") ? a.stageOrder : 999;
+    var rb = (typeof b.stageOrder === "number") ? b.stageOrder : 999;
+    if (ra !== rb) return ra - rb;
+    return topics.indexOf(a) - topics.indexOf(b);
+  });
+  var stageList = [];
+  orderedTopics.forEach(function(t){
+    if (t.stage && stageList.indexOf(t.stage) === -1) stageList.push(t.stage);
+  });
 
   function save() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
@@ -1833,20 +1937,20 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   }
 
   function renderNavs() {
-    /* ピルバー（分野ごとに色分け） */
+    /* ピルバー（履修順・段階ごとにグループ化、ピルの色は分野色） */
     pillbar.innerHTML = "";
-    fields.forEach(function(f){
+    stageList.forEach(function(stage){
       var group = document.createElement("div");
       group.className = "pill-group";
-      group.setAttribute("data-field", f.id);
       var name = document.createElement("span");
-      name.className = "pg-name"; name.textContent = f.name;
+      name.className = "pg-name stage"; name.textContent = stage;
       group.appendChild(name);
-      topics.filter(function(t){ return t.field === f.id; }).forEach(function(t){
+      orderedTopics.filter(function(t){ return t.stage === stage; }).forEach(function(t){
         var b = document.createElement("button");
         b.type = "button";
         b.className = "pill";
         b.setAttribute("data-field", t.field);
+        b.setAttribute("data-topic-id", t.id);
         b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
         b.textContent = t.title;
         if (state.exploredIds.indexOf(t.id) !== -1) {
@@ -1859,29 +1963,28 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       });
       pillbar.appendChild(group);
     });
-    /* ツリーナビ */
+    /* ツリーナビ（履修順・段階ごとにグループ化） */
     tree.innerHTML = "";
-    fields.forEach(function(f){
+    stageList.forEach(function(stage){
       var block = document.createElement("div");
-      block.className = "field-block";
-      block.setAttribute("data-field", f.id);
+      block.className = "field-block stage-block";
       var name = document.createElement("div");
-      name.className = "field-name"; name.textContent = f.name;
+      name.className = "stage-name"; name.textContent = stage;
       block.appendChild(name);
-      if (f.desc) {
-        var desc = document.createElement("div");
-        desc.className = "field-desc"; desc.textContent = f.desc;
-        block.appendChild(desc);
-      }
-      topics.filter(function(t){ return t.field === f.id; }).forEach(function(t){
+      orderedTopics.filter(function(t){ return t.stage === stage; }).forEach(function(t){
+        var f = fieldById(t.field);
         var b = document.createElement("button");
         b.type = "button";
         b.className = "topic-btn";
         b.setAttribute("data-field", t.field);
+        b.setAttribute("data-topic-id", t.id);
         b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
-        b.textContent = t.title + (state.exploredIds.indexOf(t.id) !== -1 ? " ✓" : "");
+        var chip = document.createElement("span");
+        chip.className = "stage-chip"; chip.textContent = t.stage || "";
+        b.appendChild(chip);
+        b.appendChild(document.createTextNode(t.title + (state.exploredIds.indexOf(t.id) !== -1 ? " ✓" : "")));
         var small = document.createElement("small");
-        small.textContent = t.unit || "";
+        small.textContent = (f ? f.name + "｜" : "") + (t.unit || "");
         b.appendChild(small);
         b.addEventListener("click", function(){ selectTopic(t.id, true); });
         block.appendChild(b);
@@ -1898,6 +2001,11 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       var badge = document.createElement("span");
       badge.className = "field-badge"; badge.textContent = f.name;
       topicHead.appendChild(badge);
+    }
+    if (topic.stage) {
+      var sbadge = document.createElement("span");
+      sbadge.className = "stage-badge"; sbadge.textContent = topic.stage;
+      topicHead.appendChild(sbadge);
     }
     var h2 = document.createElement("h2");
     h2.textContent = topic.title || "";
@@ -1946,6 +2054,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
 
   function selectTopic(id, withSound) {
     if (!topicById(id)) return;
+    stopNarration();
     state.activeTopicId = id;
     save();
     if (withSound) beep();
@@ -1953,9 +2062,9 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     renderAll();
   }
 
-  /* ===== 前の単元／次の単元ナビ ===== */
+  /* ===== 前の単元／次の単元ナビ（履修順で巡回） ===== */
   function topicIndex(id) {
-    for (var i = 0; i < topics.length; i++) if (topics[i].id === id) return i;
+    for (var i = 0; i < orderedTopics.length; i++) if (orderedTopics[i].id === id) return i;
     return -1;
   }
   function setNavBtn(btn, target, fallbackTitle) {
@@ -1971,8 +2080,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   }
   function renderTopicNav() {
     var idx = topicIndex(state.activeTopicId);
-    var prev = (idx > 0) ? topics[idx - 1] : null;
-    var next = (idx >= 0 && idx < topics.length - 1) ? topics[idx + 1] : null;
+    var prev = (idx > 0) ? orderedTopics[idx - 1] : null;
+    var next = (idx >= 0 && idx < orderedTopics.length - 1) ? orderedTopics[idx + 1] : null;
     setNavBtn($("prevBtnTop"), prev, "最初の単元です");
     setNavBtn($("nextBtnTop"), next, "最後の単元です");
     setNavBtn($("prevBtnBottom"), prev, "最初の単元です");
@@ -1982,8 +2091,8 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     var idx = topicIndex(state.activeTopicId);
     if (idx === -1) return;
     var nidx = idx + delta;
-    if (nidx < 0 || nidx >= topics.length) return;
-    selectTopic(topics[nidx].id, true);
+    if (nidx < 0 || nidx >= orderedTopics.length) return;
+    selectTopic(orderedTopics[nidx].id, true);
     window.scrollTo(0, 0);
   }
   ["prevBtnTop", "prevBtnBottom"].forEach(function(id){
@@ -1994,6 +2103,58 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     var b = $(id);
     if (b) b.addEventListener("click", function(){ stepTopic(1); });
   });
+
+  /* ===== 解説の読み上げ（v1.0.2・speechSynthesis・ja-JP・速度1.0） =====
+     読み上げる文章は既存データから組み立てる（単元名→問い→やること→
+     現在の学年解像度の文章→数学ガイダンス）。記号は読みやすい形に置換する。
+     停止ボタンを必ず付け、単元を切り替えたら読み上げを止める。 */
+  var narrating = false;
+  var narrateBtn = $("narrateBtn"), narrateStopBtn = $("narrateStopBtn"), narrateStatus = $("narrateStatus");
+  function narrationText(topic) {
+    var parts = [];
+    if (topic.title) parts.push(topic.title + "。");
+    if (topic.dailyHook) parts.push(topic.dailyHook);
+    if (topic.guide) parts.push("やること。" + topic.guide);
+    var lv = levelString(topic);
+    if (lv) parts.push(lv);
+    if (topic.guidance) parts.push(topic.guidance);
+    return parts.join(" ")
+      .replace(/√/g, "ルート")
+      .replace(/²/g, "2乗")
+      .replace(/³/g, "3乗")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function updateNarrationUI() {
+    if (narrateStopBtn) narrateStopBtn.disabled = !narrating;
+    if (narrateStatus) narrateStatus.textContent = narrating ? "読み上げ中…" : "";
+  }
+  function stopNarration() {
+    if (window.speechSynthesis) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+    if (narrating) { narrating = false; updateNarrationUI(); }
+  }
+  function startNarration() {
+    var topic = activeTopic();
+    if (!topic) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+      if (narrateStatus) narrateStatus.textContent = "このブラウザでは読み上げに対応していません。";
+      return;
+    }
+    stopNarration();
+    var text = narrationText(topic);
+    if (!text) return;
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP";
+    u.rate = 1.0;
+    u.onend = function(){ narrating = false; updateNarrationUI(); };
+    u.onerror = function(){ narrating = false; updateNarrationUI(); };
+    narrating = true;
+    updateNarrationUI();
+    try { window.speechSynthesis.resume(); } catch (e) {}
+    window.speechSynthesis.speak(u);
+  }
+  if (narrateBtn) narrateBtn.addEventListener("click", startNarration);
+  if (narrateStopBtn) narrateStopBtn.addEventListener("click", stopNarration);
 
   function setTab(tab, withSound) {
     document.body.setAttribute("data-tab", tab);
@@ -2061,8 +2222,14 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   });
 
   /* ===== ヘッダー操作 ===== */
+  /* スマホ表示で Canvas を固定する位置（ヘッダーの真下）を CSS 変数で渡す */
+  function syncHeaderHeight() {
+    var header = document.querySelector(".app-header");
+    if (header) document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
+  }
   function applyDeviceMode() {
     document.body.setAttribute("data-device", state.deviceMode);
+    syncHeaderHeight();
     document.querySelectorAll("[data-set-device]").forEach(function(b){
       b.setAttribute("aria-pressed", b.getAttribute("data-set-device") === state.deviceMode ? "true" : "false");
     });
@@ -2088,7 +2255,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   });
   $("updateBtn").addEventListener("click", function(){
     var url = new URL(window.location.href);
-    url.searchParams.set("v", "v1.0.1-" + Date.now());
+    url.searchParams.set("v", "v1.0.2-" + Date.now());
     window.location.replace(url.toString());
   });
   document.querySelectorAll("[data-tab-btn]").forEach(function(b){
@@ -2114,7 +2281,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     var ro2 = new ResizeObserver(function(){ ensureSketch(); });
     ro2.observe(sketch);
   }
-  window.addEventListener("resize", function(){ drawSim(); });
+  window.addEventListener("resize", function(){ syncHeaderHeight(); drawSim(); });
 
   /* ===== 初期化 ===== */
   if (!gradeLevels.some(function(g){ return g.id === state.grade; })) state.grade = gradeLevels[1] ? gradeLevels[1].id : gradeLevels[0].id;
@@ -2123,6 +2290,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   applySound();
   setTab("lab", false);
   renderAll();
+  syncHeaderHeight();
   save();
 })();
 </script>
