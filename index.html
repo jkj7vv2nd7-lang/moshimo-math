@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>モシモ・マス｜次期学習指導要領対応・中高一貫6年数学ラボ</title>
-<meta name="description" content="モシモ・マスは、次期学習指導要領対応の6分野・全18単元を、スライダー実験で学べる中高一貫6年数学ラボです。">
+<meta name="description" content="モシモ・マスは、次期学習指導要領対応の5つの道・全18単元を、スライダー実験で学べる中高一貫6年数学ラボです。教科書や授業のわかり直しに。">
 <meta property="og:title" content="モシモ・マス｜次期学習指導要領対応・中高一貫6年数学ラボ">
-<meta property="og:description" content="6分野・全18単元をスライダーで動かして実験できる、中高一貫6年の数学ラボ。学年解像度の切替と、つまずき逆引きつき。">
+<meta property="og:description" content="5つの道・全18単元をスライダーで動かして実験できる、中高一貫6年の数学ラボ。習った順に道をたどるわかり直しと、つまずき逆引きつき。">
 <meta property="og:type" content="website">
 <meta property="og:image" content="og-image.png">
 <link rel="icon" type="image/png" href="icon-180.png">
@@ -152,6 +152,53 @@ h1,h2,h3{margin:0;}
 .tree .stage-block{margin-bottom:14px;}
 .tree .stage-name{font-size:12.5px; font-weight:800; color:var(--accent); margin-bottom:6px;}
 .pill-group .pg-name.stage{color:var(--accent);}
+/* paths (v2.0.0・第2期 2A) */
+[data-path="path_num"]{--field-c:#4f46e5; --field-bg:#eef2ff;}
+[data-path="path_geo"]{--field-c:#059669; --field-bg:#ecfdf5;}
+[data-path="path_chg"]{--field-c:#d97706; --field-bg:#fffbeb;}
+[data-path="path_dat"]{--field-c:#e11d48; --field-bg:#fff1f2;}
+[data-path="path_log"]{--field-c:#7c3aed; --field-bg:#f5f3ff;}
+/* grade filter (v2.0.0) */
+.grade-filter{
+  flex:1 1 100%; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  border-top:1px dashed var(--line); padding-top:7px;
+}
+.gf-label{font-size:11.5px; font-weight:800; color:var(--ink-soft); white-space:nowrap;}
+#gradeFilterSeg{flex-wrap:wrap;}
+.gf-notice{font-size:11.5px; font-weight:700; color:var(--accent);}
+.gf-notice:empty{display:none;}
+/* path view (v2.0.0) */
+.tree-intro{font-size:13.5px; font-weight:800; line-height:1.6; color:var(--ink); margin-bottom:12px;}
+.tree-intro small{display:block; font-size:11.5px; font-weight:600; color:var(--ink-faint); margin-top:2px; line-height:1.55;}
+.tree .path-block{margin-bottom:16px;}
+.tree .path-block:last-child{margin-bottom:0;}
+.tree .path-name{font-size:13.5px; font-weight:800; color:var(--field-c);}
+.tree .path-count{font-size:11px; font-weight:700; color:var(--ink-faint); margin-left:6px;}
+.tree .path-desc{font-size:11px; color:var(--ink-faint); margin:2px 0 7px; line-height:1.5;}
+.tree .path-empty{font-size:12px; color:var(--ink-faint); line-height:1.6; margin:0 0 4px;}
+.tag-badge{
+  display:inline-block; font-size:10.5px; font-weight:800; color:#fff; background:#64748b;
+  border-radius:6px; padding:1px 6px; margin-right:6px; vertical-align:1px;
+}
+.tag-badge-head{
+  display:inline-block; font-size:11px; font-weight:800; color:#fff; background:#64748b;
+  border-radius:999px; padding:3px 10px; margin-bottom:6px; margin-left:6px;
+}
+.path-crumb{font-size:12px; font-weight:700; color:var(--ink-soft); margin-top:7px;}
+.guide-crumb{font-size:12px; font-weight:700; color:var(--accent); margin:0 0 8px;}
+.guide-crumb:empty{display:none;}
+/* pillbar path switch (v2.0.0) */
+.pill-paths{display:flex; gap:6px; overflow-x:auto; scrollbar-width:thin; padding-bottom:2px; margin-bottom:8px;}
+.pill-path-btn{
+  border:1.5px solid var(--field-c,#cbd5e1); color:var(--ink); background:#fff;
+  font-size:12.5px; font-weight:800; padding:7px 12px; border-radius:999px; white-space:nowrap; flex:0 0 auto;
+}
+.pill-path-btn[aria-pressed="true"]{background:var(--field-c); color:#fff;}
+.pill-path-btn .pp-count{font-size:10.5px; font-weight:700; opacity:.85; margin-left:4px;}
+.pill-empty{font-size:12px; color:var(--ink-faint); font-weight:600; align-self:center; white-space:nowrap;}
+/* cross-path nav (v2.0.0) */
+.topic-nav .tn-btn.tn-cross{border-style:dashed; opacity:.78;}
+.topic-nav .tn-btn.tn-cross .tn-label{color:var(--ink-soft);}
 .canvas-wrap{position:relative; width:100%; height:320px;}
 #simCanvas{display:block; width:100%; height:100%;}
 .kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
@@ -350,7 +397,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
 <header class="app-header">
   <div class="brand">
     <h1>モシモ・マス</h1>
-    <span class="version">v1.0.2</span>
+    <span class="version">v2.0.0</span>
   </div>
   <span class="explored-badge" id="exploredBadge">0/18 実験</span>
   <div class="header-controls">
@@ -363,12 +410,17 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
     <button type="button" class="hbtn" id="soundBtn" aria-pressed="true">音：オン</button>
     <button type="button" class="hbtn" id="updateBtn">最新の版に更新する</button>
   </div>
+  <div class="grade-filter">
+    <span class="gf-label">学年フィルタ</span>
+    <div class="seg" id="gradeFilterSeg" role="group" aria-label="学年フィルタ（表示する学年の範囲）"></div>
+    <span class="gf-notice" id="filterNotice" aria-live="polite"></span>
+  </div>
 </header>
 
 <main class="layout" id="layout">
   <nav class="pillbar" id="pillbar" aria-label="単元ピルバー"></nav>
 
-  <nav class="tree card" id="tree" aria-label="全単元ツリー"></nav>
+  <nav class="tree card" id="tree" aria-label="道と単元ツリー"></nav>
 
   <section class="lab" id="labPanel" aria-label="実験">
     <nav class="topic-nav topic-nav-top" aria-label="前後の単元">
@@ -401,12 +453,13 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
 
   <aside class="side" id="sidePanel">
     <section class="card block block-grade">
-      <h3>解像度（学年）切替</h3>
+      <h3>解説の詳しさ</h3>
       <div class="grade-seg" id="gradeSeg" role="group" aria-label="学年切替"></div>
       <div class="level-text" id="levelText"></div>
     </section>
     <section class="card block block-guide">
       <h3>数学ガイダンス</h3>
+      <p class="guide-crumb" id="guideCrumb"></p>
       <div class="guide-text" id="guidanceText"></div>
       <p class="guide-formula">スライダーで変数 <span class="math-var">x</span> を動かすと、結果 <span class="math-var">y</span> がどう変わるかが見えてきます。たとえば <span class="math-var">y</span> = <span class="math-var">x</span><sup>2</sup> のように、2乗（<sup>2</sup>）の変化は <span class="math-var">x</span> が大きいほど急になります。</p>
     </section>
@@ -425,12 +478,12 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   </aside>
 </main>
 
-<p class="footer-note">モシモ・マス v1.0.2｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
+<p class="footer-note">モシモ・マス v2.0.0｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
 
 <nav class="bottomtabs" id="bottomTabs" aria-label="モバイルタブ">
   <button type="button" data-tab-btn="lab" aria-pressed="true">実験</button>
-  <button type="button" data-tab-btn="rewind" aria-pressed="false">解像度・逆引</button>
-  <button type="button" data-tab-btn="catalog" aria-pressed="false">全18単元</button>
+  <button type="button" data-tab-btn="rewind" aria-pressed="false">解説・逆引</button>
+  <button type="button" data-tab-btn="catalog" aria-pressed="false">道と単元</button>
   <button type="button" data-tab-btn="memo" aria-pressed="false">メモ</button>
 </nav>
 
@@ -439,6 +492,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
 /* ===== 単元データ（ビルド時に topics.js が差し込まれます） ===== */
 // Extracted mechanically from ~/workspace/user/files/6.html (prototype HTML, <script> lines 115-1267)
 // Source: const FIELDS, const GRADE_LEVELS, const TOPICS - contents unchanged.
+// 第2期 2A で各単元に path / pathOrder / gradeRank を追加し、geo_vector の stage を数B→数Cに是正した（docs/PHASE2_DESIGN.md §3・§4）。
 
 const FIELDS = [
   { id: 'num', name: '1. 数と式', color: 'indigo', badge: 'bg-indigo-100 text-indigo-800', desc: '割合・文字式・平方根・複素数・方程式' },
@@ -463,6 +517,9 @@ const TOPICS = [
     stage: '中1',
     stageOrder: 1,
     field: 'num',
+    path: 'path_num',
+    pathOrder: 4,
+    gradeRank: 1,
     title: 'コンビニ割引クーポン対決',
     unit: '割合・比・文字式・一次不等式',
     dailyHook: '「20%オフ」と「200円引き」のクーポン、会計がいくらのとき逆転する？',
@@ -545,6 +602,9 @@ const TOPICS = [
     stage: '数II',
     stageOrder: 6,
     field: 'num',
+    path: 'path_num',
+    pathOrder: 11,
+    gradeRank: 5,
     title: '面積と回転の数：√2から虚数 i へ',
     unit: '平方根・無理数・複素数（iの回転）',
     dailyHook: '1辺が1の正方形の「面積を2倍」にする辺の長さは？さらに「90度回転」させる数とは？',
@@ -611,6 +671,9 @@ const TOPICS = [
     stage: '中3',
     stageOrder: 3,
     field: 'num',
+    path: 'path_num',
+    pathOrder: 7,
+    gradeRank: 3,
     title: '面積パズルで因数分解＆スマホプラン',
     unit: '展開・因数分解・二次方程式',
     dailyHook: '「x² + (a+b)x + ab」って呪文？実は縦(x+a)・横(x+b)の長方形の面積パズルそのもの！',
@@ -668,6 +731,9 @@ const TOPICS = [
     stage: '中3',
     stageOrder: 3,
     field: 'geo',
+    path: 'path_geo',
+    pathOrder: 7,
+    gradeRank: 3,
     title: 'スマホ・TV画面インチと三平方の定理',
     unit: '平面図形・相似比・三平方の定理',
     dailyHook: '「6.1インチのスマホ」と「55インチのテレビ」、実は縦と横の長さではなく対角線を測ってる！',
@@ -726,6 +792,9 @@ const TOPICS = [
     stage: '数I',
     stageOrder: 4,
     field: 'geo',
+    path: 'path_geo',
+    pathOrder: 8,
+    gradeRank: 4,
     title: '観覧車の高さ＆波（sin・cos・tan）',
     unit: '三角比・三角関数・単位円',
     dailyHook: '観覧車に乗って角度がθのとき、地上何メートルにいる？波のグラフの正体とは？',
@@ -795,9 +864,12 @@ const TOPICS = [
   },
   {
     id: 'geo_vector',
-    stage: '数B',
+    stage: '数C',
     stageOrder: 7,
     field: 'geo',
+    path: 'path_geo',
+    pathOrder: 11,
+    gradeRank: 6,
     title: 'ドローンの風合成＆ベクトル操作',
     unit: '平面ベクトル・空間ベクトル・内積',
     dailyHook: '東へ飛ぶドローンに北からの横風が吹いたら、実際はどっちへどれくらい進む？',
@@ -864,6 +936,9 @@ const TOPICS = [
     stage: '中2',
     stageOrder: 2,
     field: 'chg',
+    path: 'path_chg',
+    pathOrder: 2,
+    gradeRank: 2,
     title: 'サブスク元取り＆お風呂の水張り',
     unit: '比例・反比例・一次関数',
     dailyHook: '月額1,200円の映画サブスク、月何本見れば1本レンタル(400円)より得になる？',
@@ -929,6 +1004,9 @@ const TOPICS = [
     stage: '中3〜数I',
     stageOrder: 3.5,
     field: 'chg',
+    path: 'path_chg',
+    pathOrder: 4,
+    gradeRank: 4,
     title: 'バスケシュート＆車のブレーキ距離',
     unit: '二次関数 y=ax²・放物線・最大最小',
     dailyHook: '時速が2倍になると、ブレーキを踏んでから止まるまでの距離は何倍になる？',
@@ -993,6 +1071,9 @@ const TOPICS = [
     stage: '数II',
     stageOrder: 6,
     field: 'chg',
+    path: 'path_chg',
+    pathOrder: 6,
+    gradeRank: 5,
     title: 'SNSバズ＆複利貯金の指数爆発',
     unit: '指数・対数・数列・微分積分',
     dailyHook: '1人が毎日2人にシェアしたら、30日後には何人に届く？「増える勢い（微分）」も見てみよう！',
@@ -1057,6 +1138,9 @@ const TOPICS = [
     stage: '中2〜数I',
     stageOrder: 2.5,
     field: 'dat',
+    path: 'path_dat',
+    pathOrder: 5,
+    gradeRank: 4,
     title: 'テスト点数分布＆平均のワナ（外れ値）',
     unit: '代表値・箱ひげ図・標準偏差・正規分布',
     dailyHook: '「平均点は60点」なのに、なぜか自分の点数が真ん中より下？外れ値の影響を実験！',
@@ -1132,6 +1216,9 @@ const TOPICS = [
     stage: '数A',
     stageOrder: 5,
     field: 'dat',
+    path: 'path_dat',
+    pathOrder: 6,
+    gradeRank: 4,
     title: '推しライブ当選確率＆ガチャ期待値',
     unit: '場合の数・確率・余事象・期待値',
     dailyHook: '当選確率20%のライブに5回応募したら、確率100%で当たる…わけじゃない！？',
@@ -1191,6 +1278,9 @@ const TOPICS = [
     stage: '数B',
     stageOrder: 7,
     field: 'dat',
+    path: 'path_dat',
+    pathOrder: 7,
+    gradeRank: 5,
     title: 'コインのイカサマ検定（仮説検定）',
     unit: '標本調査・仮説検定・p値',
     dailyHook: '10回投げて9回「表」が出たコイン、これって偶然？それとも細工されたイカサマ？',
@@ -1269,6 +1359,9 @@ const TOPICS = [
     stage: '数I',
     stageOrder: 4,
     field: 'log',
+    path: 'path_log',
+    pathOrder: 3,
+    gradeRank: 4,
     title: '必要条件・十分条件ベン図スイッチ',
     unit: '集合と命題・必要十分条件',
     dailyHook: '「東京都民」ならば「日本国民」は正しい？逆は？いつも迷う必要・十分条件を図で一発解決！',
@@ -1325,6 +1418,9 @@ const TOPICS = [
     stage: '数B',
     stageOrder: 7,
     field: 'log',
+    path: 'path_log',
+    pathOrder: 5,
+    gradeRank: 5,
     title: 'ドミノ倒し実験（数学的帰納法）',
     unit: '図形の証明・背理法・数学的帰納法',
     dailyHook: '無限に並んだドミノが「全部倒れる」ことを、1個ずつ確認せずにどうやって証明する？',
@@ -1383,6 +1479,9 @@ const TOPICS = [
     stage: '数A',
     stageOrder: 5,
     field: 'log',
+    path: 'path_log',
+    pathOrder: 4,
+    gradeRank: 4,
     title: '迷路の最短ルート＆アルゴリズム論理',
     unit: '離散数学・論理的思考・情報科連携',
     dailyHook: 'カーナビやゲームの敵キャラはどうやって「最短ルート」を迷わず見つけているの？',
@@ -1449,6 +1548,9 @@ const TOPICS = [
     stage: '発展',
     stageOrder: 8,
     field: 'soc',
+    path: 'path_geo',
+    pathOrder: 13,
+    gradeRank: 6,
     title: '行列で画像を回転＆拡大（AI・CG）',
     unit: '行列（新指導要領 統合科目）・線形変換',
     dailyHook: 'スマホの写真アプリで画像を「回転・傾け・拡大」するとき、裏ではたった4つの数字（行列）が動いてる！',
@@ -1517,6 +1619,9 @@ const TOPICS = [
     stage: '発展',
     stageOrder: 8,
     field: 'soc',
+    path: 'path_chg',
+    pathOrder: 12,
+    gradeRank: 6,
     title: '流行・SNS噂のピークアウト予測',
     unit: '社会を読み解く数学・微分モデル',
     dailyHook: '流行や感染症はいつピークを迎えて落ち着くの？「基本再生産数」を動かして実験！',
@@ -1587,6 +1692,9 @@ const TOPICS = [
     stage: '数II',
     stageOrder: 6,
     field: 'soc',
+    path: 'path_chg',
+    pathOrder: 8,
+    gradeRank: 5,
     title: '文化祭模擬店の価格＆利益最大化',
     unit: '社会を読み解く数学・最適化・線形計画',
     dailyHook: 'タピオカを安くすればたくさん売れるけど利益が減る…「一番儲かる値段」はいくら？',
@@ -1662,6 +1770,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     activeTopicId: null,
     grade: "j2_j3",
     deviceMode: "auto",
+    gradeLimit: 6,
     params: {},
     memoText: "",
     muted: false,
@@ -1675,6 +1784,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
         if (typeof saved.activeTopicId === "string") state.activeTopicId = saved.activeTopicId;
         if (typeof saved.grade === "string") state.grade = saved.grade;
         if (typeof saved.deviceMode === "string") state.deviceMode = saved.deviceMode;
+        if (Number.isInteger(saved.gradeLimit) && saved.gradeLimit >= 1 && saved.gradeLimit <= 6) state.gradeLimit = saved.gradeLimit;
         if (saved.params && typeof saved.params === "object") state.params = saved.params;
         if (typeof saved.memoText === "string") state.memoText = saved.memoText;
         if (typeof saved.muted === "boolean") state.muted = saved.muted;
@@ -1692,20 +1802,72 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     { id: "h2_h3", label: "高2〜高3" }
   ];
 
-  /* ===== 履修順（v1.0.2） =====
-     カタログ表示と前へ／次への巡回は、中学→高校の学習順（stageOrder 昇順、
-     同順位は topics.js の元の並び）に並べ替えた orderedTopics を使う。
-     単元ID・データ・計算・描画・保存済みパラメータには影響しない。 */
-  var orderedTopics = topics.slice().sort(function(a, b){
-    var ra = (typeof a.stageOrder === "number") ? a.stageOrder : 999;
-    var rb = (typeof b.stageOrder === "number") ? b.stageOrder : 999;
-    if (ra !== rb) return ra - rb;
-    return topics.indexOf(a) - topics.indexOf(b);
-  });
-  var stageList = [];
-  orderedTopics.forEach(function(t){
-    if (t.stage && stageList.indexOf(t.stage) === -1) stageList.push(t.stage);
-  });
+  /* ===== 道ビューと学年フィルタ（v2.0.0・第2期 2A／PHASE2_DESIGN §2・§6・§7） =====
+     カタログは「道ビュー」：5つの道ごとにグループ化し、道の中では学習順
+     （pathOrder 昇順）に並べる。学年フィルタは累積式で、gradeRank <= gradeLimit
+     の場面だけを表示する。v1.0.2 の stage／stageOrder は土台として残し、
+     stage は中心学年バッジとして表示を続ける。並び替えと絞り込みは表示と
+     巡回にだけ効かせ、単元ID・データ・計算・描画・保存済みパラメータには
+     影響しない。 */
+  var PATHS = [
+    { id: "path_num", field: "num", name: "数と式の道", desc: "正負の数・文字式・方程式から、展開・因数分解、平方根、複素数まで" },
+    { id: "path_geo", field: "geo", name: "図形の道", desc: "平面・空間図形から、合同・相似・三平方、三角比、ベクトルまで" },
+    { id: "path_chg", field: "chg", name: "関数と変化の道", desc: "比例・一次関数から、二次関数、指数・対数、微分・積分まで" },
+    { id: "path_dat", field: "dat", name: "データと確からしさの道", desc: "データの整理・箱ひげ図から、確率、統計的な推測まで" },
+    { id: "path_log", field: "log", name: "論証とアルゴリズムの道", desc: "証明・集合と命題から、数え上げ、帰納法、アルゴリズムまで" }
+  ];
+  /* 第6分野「社会を読み解く数学」から各道へ振り分けた場面のバッジ（分類は topics.js の path で決まる） */
+  var PATH_TAGS = { soc_matrix: "発展", soc_sir: "発展", soc_opt: "応用" };
+  var GRADE_LIMITS = [
+    { rank: 1, label: "中1まで" }, { rank: 2, label: "中2まで" }, { rank: 3, label: "中3まで" },
+    { rank: 4, label: "高1まで" }, { rank: 5, label: "高2まで" }, { rank: 6, label: "全部（高3まで）" }
+  ];
+  var GRADE_NAMES = { 1: "中1", 2: "中2", 3: "中3", 4: "高1", 5: "高2", 6: "高3" };
+
+  function pathById(id) {
+    for (var i = 0; i < PATHS.length; i++) if (PATHS[i].id === id) return PATHS[i];
+    return null;
+  }
+  function pathOf(topic) { return topic ? pathById(topic.path) : null; }
+  function gradeRankOf(topic) { return (topic && Number.isInteger(topic.gradeRank)) ? topic.gradeRank : 6; }
+  function pathTopics(pathId) {
+    return topics.filter(function(t){ return t.path === pathId; }).sort(function(a, b){
+      var ra = (typeof a.pathOrder === "number") ? a.pathOrder : 999;
+      var rb = (typeof b.pathOrder === "number") ? b.pathOrder : 999;
+      if (ra !== rb) return ra - rb;
+      return topics.indexOf(a) - topics.indexOf(b);
+    });
+  }
+  function visibleTopics(pathId) {
+    return pathTopics(pathId).filter(function(t){ return gradeRankOf(t) <= state.gradeLimit; });
+  }
+  function allVisibleTopics() {
+    var out = [];
+    PATHS.forEach(function(p){ visibleTopics(p.id).forEach(function(t){ out.push(t); }); });
+    return out;
+  }
+  /* タブレットのピルバーで表示中の道（未指定なら開いている単元の道） */
+  var browsePathId = null;
+  function effectiveBrowsePathId() {
+    if (browsePathId && pathById(browsePathId)) return browsePathId;
+    var t = activeTopic();
+    return (t && t.path) ? t.path : PATHS[0].id;
+  }
+  function emptyPathMessage(pathId) {
+    var all = pathTopics(pathId);
+    if (!all.length) return "この道の場面はこれから増えます。";
+    var min = Math.min.apply(null, all.map(gradeRankOf));
+    return "この道は " + (GRADE_NAMES[min] || "") + " の場面から始まります（学年フィルタで非表示）";
+  }
+  function crumbText(topic) {
+    var p = pathOf(topic);
+    if (!p) return "";
+    var vis = visibleTopics(p.id);
+    for (var i = 0; i < vis.length; i++) {
+      if (vis[i].id === topic.id) return p.name + " ・ " + (i + 1) + "番目／" + vis.length + "場面";
+    }
+    return p.name + " ・ 学年フィルタの範囲外の場面";
+  }
 
   function save() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
@@ -1793,7 +1955,9 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       guidanceText = $("guidanceText"), rewindBox = $("rewindBox"),
       simCanvas = $("simCanvas"), canvasWrap = $("canvasWrap"),
       sketch = $("sketchCanvas"), memoText = $("memoText"),
-      soundBtn = $("soundBtn"), exploredBadge = $("exploredBadge");
+      soundBtn = $("soundBtn"), exploredBadge = $("exploredBadge"),
+      gradeFilterSeg = $("gradeFilterSeg"), filterNotice = $("filterNotice"),
+      guideCrumb = $("guideCrumb");
 
   var lastResult = null;
 
@@ -1888,6 +2052,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   }
 
   function renderSide(topic) {
+    if (guideCrumb) guideCrumb.textContent = crumbText(topic);
     gradeSeg.innerHTML = "";
     gradeLevels.forEach(function(g){
       var b = document.createElement("button");
@@ -1916,14 +2081,14 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       intro.textContent = "つまずいたら、土台になるこちらの単元へ戻れます。";
       rewindBox.appendChild(intro);
       targets.forEach(function(t){
-        var f = fieldById(t.field);
+        var tp = pathOf(t);
         var b = document.createElement("button");
         b.type = "button";
         b.className = "rewind-btn";
-        b.setAttribute("data-field", t.field);
+        b.setAttribute("data-field", tp ? tp.field : t.field);
         b.textContent = "↩ " + t.title;
         var small = document.createElement("small");
-        small.textContent = (f ? f.name + "｜" : "") + (t.unit || "");
+        small.textContent = (tp ? tp.name + "｜" : "") + (t.unit || "");
         b.appendChild(small);
         b.addEventListener("click", function(){ selectTopic(t.id, true); });
         rewindBox.appendChild(b);
@@ -1936,55 +2101,161 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     exploredBadge.textContent = state.exploredIds.length + "/" + topics.length + " 実験";
   }
 
-  function renderNavs() {
-    /* ピルバー（履修順・段階ごとにグループ化、ピルの色は分野色） */
-    pillbar.innerHTML = "";
-    stageList.forEach(function(stage){
-      var group = document.createElement("div");
-      group.className = "pill-group";
-      var name = document.createElement("span");
-      name.className = "pg-name stage"; name.textContent = stage;
-      group.appendChild(name);
-      orderedTopics.filter(function(t){ return t.stage === stage; }).forEach(function(t){
-        var b = document.createElement("button");
-        b.type = "button";
-        b.className = "pill";
-        b.setAttribute("data-field", t.field);
-        b.setAttribute("data-topic-id", t.id);
-        b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
-        b.textContent = t.title;
-        if (state.exploredIds.indexOf(t.id) !== -1) {
-          var d = document.createElement("span");
-          d.className = "done"; d.textContent = " ✓";
-          b.appendChild(d);
-        }
-        b.addEventListener("click", function(){ selectTopic(t.id, true); });
-        group.appendChild(b);
-      });
-      pillbar.appendChild(group);
+  /* ===== 学年フィルタ（v2.0.0・第2期 2A／PHASE2_DESIGN §6） =====
+     累積式6段階：その学年までの場面だけを道順に表示する。既定値は全部。
+     解説テキストの深さ切替（「解説の詳しさ」）とは別物である。 */
+  function showFilterNotice(msg) {
+    if (filterNotice) filterNotice.textContent = msg || "";
+  }
+  function renderGradeFilter() {
+    if (!gradeFilterSeg) return;
+    gradeFilterSeg.innerHTML = "";
+    GRADE_LIMITS.forEach(function(g){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = g.label;
+      b.setAttribute("data-grade-limit", String(g.rank));
+      b.setAttribute("aria-pressed", state.gradeLimit === g.rank ? "true" : "false");
+      b.addEventListener("click", function(){ setGradeLimit(g.rank); });
+      gradeFilterSeg.appendChild(b);
     });
-    /* ツリーナビ（履修順・段階ごとにグループ化） */
+  }
+  function setGradeLimit(rank) {
+    state.gradeLimit = rank;
+    var notice = "";
+    var topic = activeTopic();
+    if (topic && gradeRankOf(topic) > rank) {
+      /* 開いている場面が範囲外になったら、その道の最初の表示可能場面へ移る（§6.3）。
+         その道に表示可能場面がなければ、全体の最初の表示可能場面へ移る。 */
+      var vis = visibleTopics(topic.path);
+      var dest = vis.length ? vis[0] : (allVisibleTopics()[0] || null);
+      if (dest && dest.id !== topic.id) {
+        stopNarration();
+        state.activeTopicId = dest.id;
+        browsePathId = dest.path || null;
+        notice = "学年フィルタに合わせて移動しました";
+      }
+    }
+    save();
+    renderGradeFilter();
+    renderAll();
+    showFilterNotice(notice);
+  }
+
+  function renderNavs() {
+    var browseId = effectiveBrowsePathId();
+    /* ピルバー（道の切替ピル＋選択中の道の場面ピル） */
+    pillbar.innerHTML = "";
+    var pathsRow = document.createElement("div");
+    pathsRow.className = "pill-paths";
+    PATHS.forEach(function(p){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "pill-path-btn";
+      b.setAttribute("data-path", p.id);
+      b.setAttribute("data-path-id", p.id);
+      b.setAttribute("aria-pressed", p.id === browseId ? "true" : "false");
+      b.appendChild(document.createTextNode(p.name));
+      var cnt = document.createElement("span");
+      cnt.className = "pp-count";
+      cnt.textContent = visibleTopics(p.id).length + "/" + pathTopics(p.id).length;
+      b.appendChild(cnt);
+      b.addEventListener("click", function(){
+        browsePathId = p.id;
+        renderNavs();
+      });
+      pathsRow.appendChild(b);
+    });
+    pillbar.appendChild(pathsRow);
+    var bp = pathById(browseId);
+    var bvis = visibleTopics(browseId);
+    var group = document.createElement("div");
+    group.className = "pill-group";
+    if (bp) {
+      var gname = document.createElement("span");
+      gname.className = "pg-name";
+      gname.setAttribute("data-path", bp.id);
+      gname.textContent = bp.name;
+      group.appendChild(gname);
+    }
+    if (!bvis.length) {
+      var pempty = document.createElement("span");
+      pempty.className = "pill-empty";
+      pempty.textContent = emptyPathMessage(browseId);
+      group.appendChild(pempty);
+    }
+    bvis.forEach(function(t){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "pill";
+      b.setAttribute("data-field", bp ? bp.field : t.field);
+      b.setAttribute("data-topic-id", t.id);
+      b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
+      if (PATH_TAGS[t.id]) {
+        var tag = document.createElement("span");
+        tag.className = "tag-badge"; tag.textContent = PATH_TAGS[t.id];
+        b.appendChild(tag);
+      }
+      b.appendChild(document.createTextNode(t.title));
+      if (state.exploredIds.indexOf(t.id) !== -1) {
+        var d = document.createElement("span");
+        d.className = "done"; d.textContent = " ✓";
+        b.appendChild(d);
+      }
+      b.addEventListener("click", function(){ selectTopic(t.id, true); });
+      group.appendChild(b);
+    });
+    pillbar.appendChild(group);
+    /* ツリーナビ（道ビュー） */
     tree.innerHTML = "";
-    stageList.forEach(function(stage){
+    var intro = document.createElement("div");
+    intro.className = "tree-intro";
+    intro.appendChild(document.createTextNode("習った順に、道をたどってわかり直そう"));
+    var introSub = document.createElement("small");
+    introSub.textContent = "5つの道は、それぞれ中1から高3まで一本につながっています。学年フィルタで、いまの学年までの場面だけにも絞れます。";
+    intro.appendChild(introSub);
+    tree.appendChild(intro);
+    PATHS.forEach(function(p){
+      var all = pathTopics(p.id);
+      var vis = visibleTopics(p.id);
       var block = document.createElement("div");
-      block.className = "field-block stage-block";
-      var name = document.createElement("div");
-      name.className = "stage-name"; name.textContent = stage;
-      block.appendChild(name);
-      orderedTopics.filter(function(t){ return t.stage === stage; }).forEach(function(t){
-        var f = fieldById(t.field);
+      block.className = "path-block";
+      block.setAttribute("data-path", p.id);
+      var nameRow = document.createElement("div");
+      var name = document.createElement("span");
+      name.className = "path-name"; name.textContent = p.name;
+      nameRow.appendChild(name);
+      var count = document.createElement("span");
+      count.className = "path-count"; count.textContent = vis.length + "／" + all.length + "場面";
+      nameRow.appendChild(count);
+      block.appendChild(nameRow);
+      var desc = document.createElement("div");
+      desc.className = "path-desc"; desc.textContent = p.desc;
+      block.appendChild(desc);
+      if (!vis.length) {
+        var empty = document.createElement("p");
+        empty.className = "path-empty";
+        empty.textContent = emptyPathMessage(p.id);
+        block.appendChild(empty);
+      }
+      vis.forEach(function(t){
         var b = document.createElement("button");
         b.type = "button";
         b.className = "topic-btn";
-        b.setAttribute("data-field", t.field);
+        b.setAttribute("data-field", p.field);
         b.setAttribute("data-topic-id", t.id);
         b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
         var chip = document.createElement("span");
         chip.className = "stage-chip"; chip.textContent = t.stage || "";
         b.appendChild(chip);
+        if (PATH_TAGS[t.id]) {
+          var tag = document.createElement("span");
+          tag.className = "tag-badge"; tag.textContent = PATH_TAGS[t.id];
+          b.appendChild(tag);
+        }
         b.appendChild(document.createTextNode(t.title + (state.exploredIds.indexOf(t.id) !== -1 ? " ✓" : "")));
         var small = document.createElement("small");
-        small.textContent = (f ? f.name + "｜" : "") + (t.unit || "");
+        small.textContent = t.unit || "";
         b.appendChild(small);
         b.addEventListener("click", function(){ selectTopic(t.id, true); });
         block.appendChild(b);
@@ -1994,12 +2265,12 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   }
 
   function renderTopicHead(topic) {
-    var f = fieldById(topic.field);
-    topicHead.setAttribute("data-field", topic.field);
+    var p = pathOf(topic);
+    topicHead.setAttribute("data-field", p ? p.field : topic.field);
     topicHead.innerHTML = "";
-    if (f) {
+    if (p) {
       var badge = document.createElement("span");
-      badge.className = "field-badge"; badge.textContent = f.name;
+      badge.className = "field-badge"; badge.textContent = p.name;
       topicHead.appendChild(badge);
     }
     if (topic.stage) {
@@ -2007,12 +2278,21 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       sbadge.className = "stage-badge"; sbadge.textContent = topic.stage;
       topicHead.appendChild(sbadge);
     }
+    if (PATH_TAGS[topic.id]) {
+      var tbadge = document.createElement("span");
+      tbadge.className = "tag-badge-head"; tbadge.textContent = PATH_TAGS[topic.id];
+      topicHead.appendChild(tbadge);
+    }
     var h2 = document.createElement("h2");
     h2.textContent = topic.title || "";
     topicHead.appendChild(h2);
     var unit = document.createElement("div");
     unit.className = "unit"; unit.textContent = topic.unit || "";
     topicHead.appendChild(unit);
+    var crumb = document.createElement("div");
+    crumb.className = "path-crumb"; crumb.id = "pathCrumb";
+    crumb.textContent = crumbText(topic);
+    topicHead.appendChild(crumb);
     if (topic.dailyHook) {
       var hook = document.createElement("p");
       hook.className = "hook"; hook.textContent = topic.dailyHook;
@@ -2053,23 +2333,62 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   }
 
   function selectTopic(id, withSound) {
-    if (!topicById(id)) return;
+    var t = topicById(id);
+    if (!t) return;
     stopNarration();
     state.activeTopicId = id;
+    browsePathId = t.path || null;
+    showFilterNotice("");
     save();
     if (withSound) beep();
     if (effectiveMode() === "mobile") setTab("lab", false);
     renderAll();
   }
 
-  /* ===== 前の単元／次の単元ナビ（履修順で巡回） ===== */
-  function topicIndex(id) {
-    for (var i = 0; i < orderedTopics.length; i++) if (orderedTopics[i].id === id) return i;
-    return -1;
+  /* ===== 前の単元／次の単元ナビ（道の中を、表示範囲内だけで巡回） =====
+     道の端では、隣の道の端の場面を「次の道へ／前の道へ」として薄く提示する。
+     自動では進まず、ボタンが押されたときだけ道をまたぐ（PHASE2_DESIGN §6.3）。 */
+  var navTargetsCache = { prev: null, next: null, prevCross: false, nextCross: false };
+  function computeNavTargets() {
+    var res = { prev: null, next: null, prevCross: false, nextCross: false };
+    var topic = activeTopic();
+    if (!topic) return res;
+    var p = pathOf(topic);
+    if (!p) return res;
+    var vis = visibleTopics(p.id);
+    var idx = -1;
+    for (var i = 0; i < vis.length; i++) if (vis[i].id === topic.id) idx = i;
+    if (idx > 0) res.prev = vis[idx - 1];
+    if (idx >= 0 && idx < vis.length - 1) res.next = vis[idx + 1];
+    if (idx === -1) {
+      /* フィルタ範囲外の単元を開いているとき（逆引きジャンプ等）は pathOrder で前後を探す */
+      vis.forEach(function(t){
+        if (typeof t.pathOrder === "number" && typeof topic.pathOrder === "number") {
+          if (t.pathOrder < topic.pathOrder) res.prev = t;
+          if (t.pathOrder > topic.pathOrder && !res.next) res.next = t;
+        }
+      });
+    }
+    if (!res.prev) {
+      for (var j = PATHS.indexOf(p) - 1; j >= 0; j--) {
+        var pv = visibleTopics(PATHS[j].id);
+        if (pv.length) { res.prev = pv[pv.length - 1]; res.prevCross = true; break; }
+      }
+    }
+    if (!res.next) {
+      for (var k = PATHS.indexOf(p) + 1; k < PATHS.length; k++) {
+        var nv = visibleTopics(PATHS[k].id);
+        if (nv.length) { res.next = nv[0]; res.nextCross = true; break; }
+      }
+    }
+    return res;
   }
-  function setNavBtn(btn, target, fallbackTitle) {
+  function setNavBtn(btn, target, labelText, fallbackTitle, isCross) {
     if (!btn) return;
     var titleEl = btn.querySelector(".tn-title");
+    var labelEl = btn.querySelector(".tn-label");
+    btn.classList.toggle("tn-cross", !!isCross);
+    if (labelEl && labelText) labelEl.textContent = labelText;
     if (target) {
       btn.disabled = false;
       if (titleEl) titleEl.textContent = target.title || "";
@@ -2079,20 +2398,19 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     }
   }
   function renderTopicNav() {
-    var idx = topicIndex(state.activeTopicId);
-    var prev = (idx > 0) ? orderedTopics[idx - 1] : null;
-    var next = (idx >= 0 && idx < orderedTopics.length - 1) ? orderedTopics[idx + 1] : null;
-    setNavBtn($("prevBtnTop"), prev, "最初の単元です");
-    setNavBtn($("nextBtnTop"), next, "最後の単元です");
-    setNavBtn($("prevBtnBottom"), prev, "最初の単元です");
-    setNavBtn($("nextBtnBottom"), next, "最後の単元です");
+    var t = computeNavTargets();
+    navTargetsCache = t;
+    var prevLabel = t.prevCross ? "← 前の道へ" : "← 前の単元";
+    var nextLabel = t.nextCross ? "次の道へ →" : "次の単元 →";
+    setNavBtn($("prevBtnTop"), t.prev, prevLabel, "最初の単元です", t.prevCross);
+    setNavBtn($("nextBtnTop"), t.next, nextLabel, "最後の単元です", t.nextCross);
+    setNavBtn($("prevBtnBottom"), t.prev, prevLabel, "最初の単元です", t.prevCross);
+    setNavBtn($("nextBtnBottom"), t.next, nextLabel, "最後の単元です", t.nextCross);
   }
   function stepTopic(delta) {
-    var idx = topicIndex(state.activeTopicId);
-    if (idx === -1) return;
-    var nidx = idx + delta;
-    if (nidx < 0 || nidx >= orderedTopics.length) return;
-    selectTopic(orderedTopics[nidx].id, true);
+    var target = delta < 0 ? navTargetsCache.prev : navTargetsCache.next;
+    if (!target) return;
+    selectTopic(target.id, true);
     window.scrollTo(0, 0);
   }
   ["prevBtnTop", "prevBtnBottom"].forEach(function(id){
@@ -2255,7 +2573,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   });
   $("updateBtn").addEventListener("click", function(){
     var url = new URL(window.location.href);
-    url.searchParams.set("v", "v1.0.2-" + Date.now());
+    url.searchParams.set("v", "v2.0.0-" + Date.now());
     window.location.replace(url.toString());
   });
   document.querySelectorAll("[data-tab-btn]").forEach(function(b){
@@ -2286,8 +2604,10 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   /* ===== 初期化 ===== */
   if (!gradeLevels.some(function(g){ return g.id === state.grade; })) state.grade = gradeLevels[1] ? gradeLevels[1].id : gradeLevels[0].id;
   if (["auto", "mobile", "tablet", "pc"].indexOf(state.deviceMode) === -1) state.deviceMode = "auto";
+  if (!(Number.isInteger(state.gradeLimit) && state.gradeLimit >= 1 && state.gradeLimit <= 6)) state.gradeLimit = 6;
   applyDeviceMode();
   applySound();
+  renderGradeFilter();
   setTab("lab", false);
   renderAll();
   syncHeaderHeight();
