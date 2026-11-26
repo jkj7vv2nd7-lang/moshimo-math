@@ -630,12 +630,65 @@ body[data-device="pc"] .topic-head .guide-line{flex:1 1 280px; margin-top:6px; f
   body[data-device="auto"] .topic-head .guide-line{flex:1 1 280px; margin-top:6px; font-size:13px; line-height:1.55; padding:7px 9px;}
 }
 </style>
+<style>
+/* ============================================================
+   v2.0.2: PCでグラフ（Canvas）を極力大きくする
+   - 左右ペインとスライダー列を細くして Canvas 列を広げる
+   - KPI帯を右列（スライダーの下）へ移し、Canvas が縦にも伸びるようにする
+     （KPI帯はグリッドの独立エリアなので、スライダーカードのスクロールに巻き込まれず常に見える）
+   - 単元ヘッダー・前へ／次へ・読み上げ行を compact 化して縦を空ける
+   ============================================================ */
+body[data-device="pc"] .layout{
+  grid-template-columns:248px minmax(0,1fr) 292px;
+  padding:12px; gap:12px;
+}
+body[data-device="pc"] .lab{
+  grid-template-columns:minmax(0,1fr) 264px;
+  grid-template-rows:auto auto minmax(0,1fr) auto auto;
+  grid-template-areas:"nav nav" "head head" "canvas sliders" "canvas kpi" "narr navb";
+  gap:8px;
+}
+body[data-device="pc"] .kpis{gap:6px;}
+body[data-device="pc"] .kpi{padding:6px 7px;}
+body[data-device="pc"] .kpi .k-label{font-size:10.5px;}
+body[data-device="pc"] .kpi .k-val{font-size:15px;}
+body[data-device="pc"] .kpi .k-sub{font-size:10.5px;}
+body[data-device="pc"] .topic-nav .tn-btn{min-height:36px; padding:4px 10px;}
+body[data-device="pc"] .narrate-btn,
+body[data-device="pc"] .narrate-stop-btn{min-height:36px;}
+body[data-device="pc"] .topic-head{padding:8px 10px;}
+body[data-device="pc"] .topic-head .hook{font-size:12px; line-height:1.5; padding:6px 8px;}
+body[data-device="pc"] .topic-head .guide-line{font-size:12.5px; line-height:1.5; padding:6px 8px;}
+@media (min-width:1120px){
+  body[data-device="auto"] .layout{
+    grid-template-columns:248px minmax(0,1fr) 292px;
+    padding:12px; gap:12px;
+  }
+  body[data-device="auto"] .lab{
+    grid-template-columns:minmax(0,1fr) 264px;
+    grid-template-rows:auto auto minmax(0,1fr) auto auto;
+    grid-template-areas:"nav nav" "head head" "canvas sliders" "canvas kpi" "narr navb";
+    gap:8px;
+  }
+  body[data-device="auto"] .kpis{gap:6px;}
+  body[data-device="auto"] .kpi{padding:6px 7px;}
+  body[data-device="auto"] .kpi .k-label{font-size:10.5px;}
+  body[data-device="auto"] .kpi .k-val{font-size:15px;}
+  body[data-device="auto"] .kpi .k-sub{font-size:10.5px;}
+  body[data-device="auto"] .topic-nav .tn-btn{min-height:36px; padding:4px 10px;}
+  body[data-device="auto"] .narrate-btn,
+  body[data-device="auto"] .narrate-stop-btn{min-height:36px;}
+  body[data-device="auto"] .topic-head{padding:8px 10px;}
+  body[data-device="auto"] .topic-head .hook{font-size:12px; line-height:1.5; padding:6px 8px;}
+  body[data-device="auto"] .topic-head .guide-line{font-size:12.5px; line-height:1.5; padding:6px 8px;}
+}
+</style>
 </head>
 <body data-device="auto" data-tab="lab">
 <header class="app-header">
   <div class="brand">
     <h1>モシモ・マス</h1>
-    <span class="version">v2.0.1</span>
+    <span class="version">v2.0.2</span>
   </div>
   <span class="explored-badge" id="exploredBadge">0/18 実験</span>
   <div class="header-controls">
@@ -724,7 +777,7 @@ body[data-device="pc"] .topic-head .guide-line{flex:1 1 280px; margin-top:6px; f
   </aside>
 </main>
 
-<p class="footer-note">モシモ・マス v2.0.1｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
+<p class="footer-note">モシモ・マス v2.0.2｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
 
 <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
@@ -820,12 +873,36 @@ const TOPICS = [
       ctx.lineTo(toX(v.yen), toY(0));
       ctx.lineTo(toX(maxX), toY(maxX - v.yen));
       ctx.stroke();
-      // Break-even marker
+      // Break-even marker（v2.0.2: 逆転箇所を大きく強調。軸へのガイド線・ハロー・白リングつき）
       if (res.breakEven <= maxX) {
         const bx = toX(res.breakEven), by = toY(res.breakEven - v.yen);
+        // Guide lines to both axes
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, h - pad); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(pad, by); ctx.stroke();
+        ctx.setLineDash([]);
+        // Halo + marker with white ring
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+        ctx.beginPath(); ctx.arc(bx, by, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(bx, by, 9, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(bx, by, 9, 0, Math.PI * 2); ctx.stroke();
         ctx.fillStyle = '#0f172a';
-        ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillText(`逆転: ${res.breakEven}円`, Math.min(bx + 8, w - 95), Math.max(by - 10, 20));
+        ctx.beginPath(); ctx.arc(bx, by, 3.5, 0, Math.PI * 2); ctx.fill();
+        // Label with background pill
+        const beLabel = `逆転: ${res.breakEven}円`;
+        ctx.font = 'bold 13px Inter, sans-serif';
+        const beTw = ctx.measureText(beLabel).width;
+        let beLx = bx + 16; if (beLx + beTw + 12 > w - pad) beLx = bx - beTw - 28;
+        const beLy = Math.max(by - 28, 6);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+        ctx.fillRect(beLx - 5, beLy - 4, beTw + 10, 22);
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+        ctx.strokeRect(beLx - 5, beLy - 4, beTw + 10, 22);
+        ctx.fillStyle = '#92400e';
+        ctx.fillText(beLabel, beLx, beLy + 12);
+        ctx.font = '11px Inter, sans-serif';
       }
       // Current price marker
       const cx = toX(v.price);
@@ -1227,6 +1304,27 @@ const TOPICS = [
       ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(toX(0), toY(0)); ctx.lineTo(toX(maxX), toY(v.unitPrice * maxX)); ctx.stroke();
 
+      // Break-even point（v2.0.2: 2直線の交点＝元取りの境目を大きく強調。x軸へのガイド線つき）
+      const beX = v.subFee / v.unitPrice;
+      if (beX >= 0 && beX <= maxX) {
+        const bx = toX(beX), by = toY(v.subFee);
+        ctx.strokeStyle = 'rgba(217, 119, 6, 0.6)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx, h - pad); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+        ctx.beginPath(); ctx.arc(bx, by, 13, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(bx, by, 3, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#92400e'; ctx.font = 'bold 11px Inter, sans-serif';
+        // 「サブスク定額」のラベル（左上）と重ならないよう、原則として交点の下側に置く
+        const beLabelY = (by + 30 < h - pad) ? by + 24 : Math.max(by - 12, 20);
+        ctx.fillText('交点（元取り）', Math.min(bx + 13, w - 100), beLabelY);
+      }
+
       // Current point
       const cx = toX(v.times);
       ctx.setLineDash([4, 4]); ctx.strokeStyle = '#cbd5e1';
@@ -1445,9 +1543,9 @@ const TOPICS = [
       // Median line
       ctx.strokeStyle = '#059669'; ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(toX(res.median), by); ctx.lineTo(toX(res.median), by + bh); ctx.stroke();
-      // Mean line
-      ctx.strokeStyle = '#e11d48'; ctx.setLineDash([4, 4]);
-      ctx.beginPath(); ctx.moveTo(toX(res.mean), by - 12); ctx.lineTo(toX(res.mean), by + bh + 12); ctx.stroke();
+      // Mean line（v2.0.2: 平均の線を太く・破線を長くして視認性を上げる）
+      ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 4; ctx.setLineDash([7, 4]);
+      ctx.beginPath(); ctx.moveTo(toX(res.mean), by - 14); ctx.lineTo(toX(res.mean), by + bh + 14); ctx.stroke();
       ctx.setLineDash([]);
       ctx.fillStyle = '#e11d48'; ctx.fillText(`平均 ${res.mean.toFixed(1)}`, toX(res.mean) - 20, by - 16);
       ctx.fillStyle = '#059669'; ctx.fillText(`中央値 ${res.median.toFixed(1)}`, toX(res.median) - 22, by + bh + 16);
@@ -1585,13 +1683,24 @@ const TOPICS = [
       }
       ctx.stroke();
 
-      // Observed marker
+      // Zone boundaries（v2.0.2: 通常圏の境目＝±1.96σ の境界線を破線で強調）
+      ctx.strokeStyle = 'rgba(5, 150, 105, 0.8)'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+      [low, high].forEach(bnd => {
+        const bxx = toX(bnd);
+        ctx.beginPath(); ctx.moveTo(bxx, pad + 32); ctx.lineTo(bxx, h - pad); ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // Observed marker（v2.0.2: 線を太くし、上部に三角の印を追加）
       const ox = toX(res.k);
-      ctx.strokeStyle = res.isWeird ? '#e11d48' : '#059669'; ctx.lineWidth = 3;
+      ctx.strokeStyle = res.isWeird ? '#e11d48' : '#059669'; ctx.lineWidth = 4.5;
       ctx.beginPath(); ctx.moveTo(ox, pad + 15); ctx.lineTo(ox, h - pad); ctx.stroke();
       ctx.fillStyle = res.isWeird ? '#e11d48' : '#059669';
+      ctx.beginPath();
+      ctx.moveTo(ox - 6.5, pad + 3); ctx.lineTo(ox + 6.5, pad + 3); ctx.lineTo(ox, pad + 15);
+      ctx.closePath(); ctx.fill();
       ctx.font = 'bold 12px Inter, sans-serif';
-      ctx.fillText(`結果: ${res.k}回`, Math.min(ox + 6, w - 85), pad + 26);
+      ctx.fillText(`結果: ${res.k}回`, Math.min(ox + 8, w - 85), pad + 26);
     },
     levels: {
       elem_j1: '普通のコインならだいたい半分が表になります。極端に偏ったら「偶然じゃないかも？」と疑うことができます。',
@@ -1987,11 +2096,22 @@ const TOPICS = [
       }
       ctx.stroke();
 
-      // Optimal peak
+      // Optimal peak（v2.0.2: 頂点を大きく強調。両軸へのガイド線・ハロー・白リングつき）
+      const opx = toX(res.optPrice), opy = toY(res.maxProfit);
+      ctx.strokeStyle = 'rgba(180, 83, 9, 0.55)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(opx, opy); ctx.lineTo(opx, h - pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(opx, opy); ctx.lineTo(pad, opy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+      ctx.beginPath(); ctx.arc(opx, opy, 14, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#f59e0b';
-      ctx.beginPath(); ctx.arc(toX(res.optPrice), toY(res.maxProfit), 6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(opx, opy, 9, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(opx, opy, 9, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.arc(opx, opy, 3.5, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#b45309'; ctx.font = 'bold 11px Inter, sans-serif';
-      ctx.fillText(`頂点 ${res.optPrice}円`, toX(res.optPrice) - 24, toY(res.maxProfit) - 10);
+      ctx.fillText(`頂点 ${res.optPrice}円`, opx - 24, opy - 17);
 
       // Current price
       ctx.fillStyle = '#4f46e5';
@@ -2875,7 +2995,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   });
   $("updateBtn").addEventListener("click", function(){
     var url = new URL(window.location.href);
-    url.searchParams.set("v", "v2.0.1-" + Date.now());
+    url.searchParams.set("v", "v2.0.2-" + Date.now());
     window.location.replace(url.toString());
   });
   document.querySelectorAll("[data-tab-btn]").forEach(function(b){
