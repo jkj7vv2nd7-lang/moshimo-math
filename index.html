@@ -108,6 +108,26 @@ h1,h2,h3{margin:0;}
   margin-top:9px; font-size:13.5px; line-height:1.65; color:var(--ink);
   background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:9px 11px;
 }
+.topic-head .guide-line{
+  margin:9px 0 0; font-size:14px; font-weight:700; line-height:1.6; color:var(--ink);
+  background:var(--field-bg); border-left:5px solid var(--field-c); border-radius:8px; padding:9px 11px;
+}
+.topic-head .guide-line .gl-label{color:var(--field-c); font-weight:800;}
+/* prev / next topic nav */
+.topic-nav{display:flex; gap:10px;}
+.topic-nav .tn-btn{
+  flex:1 1 0; min-width:0; min-height:56px;
+  border:1.5px solid var(--accent); background:#fff; color:var(--ink);
+  border-radius:12px; padding:8px 12px; text-align:left;
+  display:flex; flex-direction:column; gap:1px; justify-content:center;
+}
+.topic-nav .tn-btn.tn-next{text-align:right; align-items:flex-end;}
+.topic-nav .tn-label{font-size:14px; font-weight:800; color:var(--accent); white-space:nowrap;}
+.topic-nav .tn-title{font-size:12px; font-weight:600; color:var(--ink-soft); overflow-wrap:anywhere; line-height:1.35;}
+.topic-nav .tn-btn:disabled{opacity:.4; border-color:var(--line); cursor:default;}
+.topic-nav .tn-btn:disabled .tn-label{color:var(--ink-faint);}
+.topic-nav-top .tn-btn{min-height:46px; padding:6px 12px;}
+.scroll-hint{display:none; margin:0; font-size:12.5px; font-weight:700; color:var(--accent); text-align:center;}
 .canvas-wrap{position:relative; width:100%; height:320px;}
 #simCanvas{display:block; width:100%; height:100%;}
 .kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
@@ -232,7 +252,8 @@ body[data-device="mobile"] .layout{
 body[data-device="mobile"] .pillbar{display:none;}
 body[data-device="mobile"] .bottomtabs{display:grid;}
 body[data-device="mobile"] .footer-note{padding-bottom:84px;}
-body[data-device="mobile"] .canvas-wrap{height:260px;}
+body[data-device="mobile"] .canvas-wrap{height:210px;}
+body[data-device="mobile"] .scroll-hint{display:block;}
 body[data-device="mobile"] .brand h1{font-size:18px;}
 body[data-device="mobile"][data-tab="lab"] .tree,
 body[data-device="mobile"][data-tab="lab"] .side{display:none;}
@@ -257,7 +278,8 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   body[data-device="auto"] .pillbar{display:none;}
   body[data-device="auto"] .bottomtabs{display:grid;}
   body[data-device="auto"] .footer-note{padding-bottom:84px;}
-  body[data-device="auto"] .canvas-wrap{height:260px;}
+  body[data-device="auto"] .canvas-wrap{height:210px;}
+  body[data-device="auto"] .scroll-hint{display:block;}
   body[data-device="auto"] .brand h1{font-size:18px;}
   body[data-device="auto"][data-tab="lab"] .tree,
   body[data-device="auto"][data-tab="lab"] .side{display:none;}
@@ -280,7 +302,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
 <header class="app-header">
   <div class="brand">
     <h1>モシモ・マス</h1>
-    <span class="version">v1.0.0</span>
+    <span class="version">v1.0.1</span>
   </div>
   <span class="explored-badge" id="exploredBadge">0/18 実験</span>
   <div class="header-controls">
@@ -301,10 +323,15 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   <nav class="tree card" id="tree" aria-label="全単元ツリー"></nav>
 
   <section class="lab" id="labPanel" aria-label="実験">
+    <nav class="topic-nav topic-nav-top" aria-label="前後の単元">
+      <button type="button" class="tn-btn" id="prevBtnTop"><span class="tn-label">← 前の単元</span><span class="tn-title"></span></button>
+      <button type="button" class="tn-btn tn-next" id="nextBtnTop"><span class="tn-label">次の単元 →</span><span class="tn-title"></span></button>
+    </nav>
     <div class="card topic-head" id="topicHead"></div>
     <div class="card">
       <div class="canvas-wrap" id="canvasWrap"><canvas id="simCanvas"></canvas></div>
     </div>
+    <p class="scroll-hint">👇 下の「実験スライダー」を動かして実験しよう</p>
     <div class="kpis" id="kpiGrid" aria-live="polite"></div>
     <div class="card">
       <div class="sliders-head">
@@ -313,6 +340,10 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
       </div>
       <div id="sliderBox"></div>
     </div>
+    <nav class="topic-nav" aria-label="前後の単元">
+      <button type="button" class="tn-btn" id="prevBtnBottom"><span class="tn-label">← 前の単元</span><span class="tn-title"></span></button>
+      <button type="button" class="tn-btn tn-next" id="nextBtnBottom"><span class="tn-label">次の単元 →</span><span class="tn-title"></span></button>
+    </nav>
   </section>
 
   <aside class="side" id="sidePanel">
@@ -341,7 +372,7 @@ body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
   </aside>
 </main>
 
-<p class="footer-note">モシモ・マス v1.0.0｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
+<p class="footer-note">モシモ・マス v1.0.1｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
 
 <nav class="bottomtabs" id="bottomTabs" aria-label="モバイルタブ">
   <button type="button" data-tab-btn="lab" aria-pressed="true">実験</button>
@@ -380,6 +411,7 @@ const TOPICS = [
     title: 'コンビニ割引クーポン対決',
     unit: '割合・比・文字式・一次不等式',
     dailyHook: '「20%オフ」と「200円引き」のクーポン、会計がいくらのとき逆転する？',
+    guide: 'スライダーを動かして、2つのクーポンが逆転する金額を探そう',
     guidance: '買い物の損得だけでなく、ビジネスの利益率や税制設計はすべて文字式と不等式でルール化されています。',
     rewindIds: [],
     params: [
@@ -459,6 +491,7 @@ const TOPICS = [
     title: '面積と回転の数：√2から虚数 i へ',
     unit: '平方根・無理数・複素数（iの回転）',
     dailyHook: '1辺が1の正方形の「面積を2倍」にする辺の長さは？さらに「90度回転」させる数とは？',
+    guide: '面積を変えて辺の長さを確かめ、i を掛ける回数で90°回転を見よう',
     guidance: '実数だけでは表せない「回転や波」の計算に虚数 i が使われ、電気回路・量子力学・ゲームの回転処理を支えています。',
     rewindIds: ['num_discount'],
     params: [
@@ -522,6 +555,7 @@ const TOPICS = [
     title: '面積パズルで因数分解＆スマホプラン',
     unit: '展開・因数分解・二次方程式',
     dailyHook: '「x² + (a+b)x + ab」って呪文？実は縦(x+a)・横(x+b)の長方形の面積パズルそのもの！',
+    guide: 'a と b を動かして、面積パズルが因数分解になることを確かめよう',
     guidance: '複雑な式を掛け算の形に分解（因数分解）することで、損益の境界や最適サイズが一瞬で見抜けるようになります。',
     rewindIds: ['num_discount'],
     params: [
@@ -576,6 +610,7 @@ const TOPICS = [
     title: 'スマホ・TV画面インチと三平方の定理',
     unit: '平面図形・相似比・三平方の定理',
     dailyHook: '「6.1インチのスマホ」と「55インチのテレビ」、実は縦と横の長さではなく対角線を測ってる！',
+    guide: 'インチ数と比率を動かして、画面の縦・横の長さを求めよう',
     guidance: '画面の比率（16:9など）と三平方の定理を使えば、スペック表の「インチ」だけで実際の縦横cmが計算できます。',
     rewindIds: ['num_sqrt_complex'],
     params: [
@@ -631,6 +666,7 @@ const TOPICS = [
     title: '観覧車の高さ＆波（sin・cos・tan）',
     unit: '三角比・三角関数・単位円',
     dailyHook: '観覧車に乗って角度がθのとき、地上何メートルにいる？波のグラフの正体とは？',
+    guide: '角度 θ を動かして、観覧車の高さと波の動きを追いかけよう',
     guidance: 'sin・cosは「円運動を横から見た高さ・影」です。音・光・電波・地震波の解析はすべて三角関数で動いています。',
     rewindIds: ['geo_pythagoras'],
     params: [
@@ -700,6 +736,7 @@ const TOPICS = [
     title: 'ドローンの風合成＆ベクトル操作',
     unit: '平面ベクトル・空間ベクトル・内積',
     dailyHook: '東へ飛ぶドローンに北からの横風が吹いたら、実際はどっちへどれくらい進む？',
+    guide: '推力と風を動かして、ドローンが実際に進む向きと速さを確かめよう',
     guidance: 'ゲームのキャラ移動、3Dグラフィックスの光の反射、AIの意味空間（単語ベクトル）など現代技術の要です。',
     rewindIds: ['geo_pythagoras', 'geo_trig'],
     params: [
@@ -763,6 +800,7 @@ const TOPICS = [
     title: 'サブスク元取り＆お風呂の水張り',
     unit: '比例・反比例・一次関数',
     dailyHook: '月額1,200円の映画サブスク、月何本見れば1本レンタル(400円)より得になる？',
+    guide: '月額と使う回数を動かして、サブスクが元を取る回数を探そう',
     guidance: '固定費＋従量課金のビジネスモデル（電気代・ジム・クラウド料金）の比較はすべて一次関数です。',
     rewindIds: ['num_discount'],
     params: [
@@ -825,6 +863,7 @@ const TOPICS = [
     title: 'バスケシュート＆車のブレーキ距離',
     unit: '二次関数 y=ax²・放物線・最大最小',
     dailyHook: '時速が2倍になると、ブレーキを踏んでから止まるまでの距離は何倍になる？',
+    guide: '時速を動かして、ブレーキを踏んでから止まるまでの距離が何倍になるか確かめよう',
     guidance: '車の安全設計、スポーツの弾道計算、アンテナのパラボラ形状など、加速度が関わる現象はすべて二次関数です。',
     rewindIds: ['chg_linear'],
     params: [
@@ -886,6 +925,7 @@ const TOPICS = [
     title: 'SNSバズ＆複利貯金の指数爆発',
     unit: '指数・対数・数列・微分積分',
     dailyHook: '1人が毎日2人にシェアしたら、30日後には何人に届く？「増える勢い（微分）」も見てみよう！',
+    guide: '増加倍率と日数を動かして、指数の増え方の勢いを見よう',
     guidance: 'ウイルスの感染、SNSの拡散、投資の複利、AIの計算量増加など、世の中の急激な変化は「指数」で起きます。',
     rewindIds: ['chg_linear', 'chg_quad'],
     params: [
@@ -947,6 +987,7 @@ const TOPICS = [
     title: 'テスト点数分布＆平均のワナ（外れ値）',
     unit: '代表値・箱ひげ図・標準偏差・正規分布',
     dailyHook: '「平均点は60点」なのに、なぜか自分の点数が真ん中より下？外れ値の影響を実験！',
+    guide: '天才の点数とばらつきを動かして、平均と真ん中のずれを見よう',
     guidance: 'ニュースの「平均年収」や「偏差値」に騙されないためには、平均だけでなく散らばり（箱ひげ図・標準偏差）を見る力が必須です。',
     rewindIds: ['num_discount'],
     params: [
@@ -1019,6 +1060,7 @@ const TOPICS = [
     title: '推しライブ当選確率＆ガチャ期待値',
     unit: '場合の数・確率・余事象・期待値',
     dailyHook: '当選確率20%のライブに5回応募したら、確率100%で当たる…わけじゃない！？',
+    guide: '確率と回数を動かして、「少なくとも1回当たる確率」を確かめよう',
     guidance: 'ガチャの確率表記、保険料の計算、天気予報の降水確率など、不確実な未来を数値で判断する必須スキルです。',
     rewindIds: ['num_discount'],
     params: [
@@ -1075,6 +1117,7 @@ const TOPICS = [
     title: 'コインのイカサマ検定（仮説検定）',
     unit: '標本調査・仮説検定・p値',
     dailyHook: '10回投げて9回「表」が出たコイン、これって偶然？それとも細工されたイカサマ？',
+    guide: '投げた回数と表の回数を動かして、そのコインがイカサマか判定しよう',
     guidance: '新薬が本当に効くか、A/Bテストでどちらのデザインが優れているか、現代のデータ判断の核が「仮説検定」です。',
     rewindIds: ['dat_prob', 'dat_dist'],
     params: [
@@ -1150,6 +1193,7 @@ const TOPICS = [
     title: '必要条件・十分条件ベン図スイッチ',
     unit: '集合と命題・必要十分条件',
     dailyHook: '「東京都民」ならば「日本国民」は正しい？逆は？いつも迷う必要・十分条件を図で一発解決！',
+    guide: 'P と Q の広さを動かして、必要条件・十分条件の関係を図で確かめよう',
     guidance: 'プログラミングの if文、法律の条文、契約書の穴を見抜くクリティカルシンキングの土台です。',
     rewindIds: [],
     params: [
@@ -1203,6 +1247,7 @@ const TOPICS = [
     title: 'ドミノ倒し実験（数学的帰納法）',
     unit: '図形の証明・背理法・数学的帰納法',
     dailyHook: '無限に並んだドミノが「全部倒れる」ことを、1個ずつ確認せずにどうやって証明する？',
+    guide: '間隔を動かして、ドミノがどこまで倒れるか実験しよう',
     guidance: 'コンピュータプログラムが無限の入力に対してバグらないことを保証する「ループ不変条件」と同じ論理構造です。',
     rewindIds: ['log_cond'],
     params: [
@@ -1258,6 +1303,7 @@ const TOPICS = [
     title: '迷路の最短ルート＆アルゴリズム論理',
     unit: '離散数学・論理的思考・情報科連携',
     dailyHook: 'カーナビやゲームの敵キャラはどうやって「最短ルート」を迷わず見つけているの？',
+    guide: 'ブロック数と通行止めを動かして、最短ルートの数を数えよう',
     guidance: '新学習指導要領で重視される「数学と情報科の連携」。条件分岐とステップ数の見積もりがアルゴリズムの心臓部です。',
     rewindIds: ['log_cond', 'log_induct'],
     params: [
@@ -1321,6 +1367,7 @@ const TOPICS = [
     title: '行列で画像を回転＆拡大（AI・CG）',
     unit: '行列（新指導要領 統合科目）・線形変換',
     dailyHook: 'スマホの写真アプリで画像を「回転・傾け・拡大」するとき、裏ではたった4つの数字（行列）が動いてる！',
+    guide: '拡大・回転・傾きを動かして、画像がどう変わるか確かめよう',
     guidance: '次期指導要領で高校数学の重要トピックに復帰する「行列」。3Dゲーム、AIのニューラルネットワーク、画像処理の基本です。',
     rewindIds: ['geo_vector'],
     params: [
@@ -1386,6 +1433,7 @@ const TOPICS = [
     title: '流行・SNS噂のピークアウト予測',
     unit: '社会を読み解く数学・微分モデル',
     dailyHook: '流行や感染症はいつピークを迎えて落ち着くの？「基本再生産数」を動かして実験！',
+    guide: '感染力と対策率を動かして、流行のピークがどう動くか見よう',
     guidance: '感染症対策、SNSトレンド予測、新商品の市場浸透率など、社会のダイナミクスを数理モデルで読み解きます。',
     rewindIds: ['chg_exp_calc'],
     params: [
@@ -1453,6 +1501,7 @@ const TOPICS = [
     title: '文化祭模擬店の価格＆利益最大化',
     unit: '社会を読み解く数学・最適化・線形計画',
     dailyHook: 'タピオカを安くすればたくさん売れるけど利益が減る…「一番儲かる値段」はいくら？',
+    guide: '価格と原価を動かして、一番儲かる値段を探そう',
     guidance: '航空券のダイナミックプライシング、物流ルートの最適化など、限られた資源で最大の効果を出す意思決定の数学です。',
     rewindIds: ['chg_quad', 'num_discount'],
     params: [
@@ -1586,28 +1635,51 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     return "pc";
   }
 
-  /* ===== 効果音（WebAudio・三角波 1318Hz・0.07秒・ゲイン0.1） ===== */
+  /* ===== 効果音（WebAudio・三角波 1318.5Hz・ゲイン0.5・約0.08秒） =====
+     本人のiPhone実機で聞こえることが実証済みの音色・音域・音量に合わせた。
+     iPhone Safari では AudioContext はユーザー操作の中で生成／resume しないと
+     鳴らないため、タッチ・クリック・入力のたびに ensureAudio() で状態を確認し、
+     suspended / interrupted なら resume する。連続発音はスロットルする。 */
   var audioCtx = null;
-  function beep() {
-    if (state.muted) return;
+  var lastBeepAt = 0;
+  function ensureAudio() {
+    if (state.muted) return null;
     try {
       if (!audioCtx) {
         var AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
+        if (!AC) return null;
         audioCtx = new AC();
       }
-      if (audioCtx.state === "suspended") audioCtx.resume();
-      var t = audioCtx.currentTime;
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
+      if (audioCtx.state === "suspended" || audioCtx.state === "interrupted") {
+        var p = audioCtx.resume();
+        if (p && typeof p.catch === "function") p.catch(function(){});
+      }
+      return audioCtx;
+    } catch (e) { return null; }
+  }
+  function beep() {
+    if (state.muted) return;
+    var now = (window.performance && typeof performance.now === "function") ? performance.now() : Date.now();
+    if (now - lastBeepAt < 80) return; /* スロットル：連続操作でうるさくしない */
+    lastBeepAt = now;
+    var ctx = ensureAudio();
+    if (!ctx) return;
+    try {
+      var t = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
       osc.type = "triangle";
-      osc.frequency.setValueAtTime(1318, t);
-      gain.gain.setValueAtTime(0.1, t);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(t); osc.stop(t + 0.075);
+      osc.frequency.setValueAtTime(1318.5, t);
+      gain.gain.setValueAtTime(0.5, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.09);
     } catch (e) {}
   }
+  /* 最初のタッチ／クリック／入力のたびに AudioContext の状態を確認する */
+  ["pointerdown", "touchstart", "click", "input"].forEach(function(type){
+    document.addEventListener(type, function(){ ensureAudio(); }, true);
+  });
 
   /* ===== DOM参照 ===== */
   var $ = function(id){ return document.getElementById(id); };
@@ -1685,6 +1757,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
         if (!state.params[topic.id]) state.params[topic.id] = {};
         state.params[topic.id][p.key] = v;
         val.textContent = String(v);
+        beep();
         save();
         var data = computeActive();
         if (data) { renderKpis(data.res); drawSim(); }
@@ -1837,6 +1910,15 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
       hook.className = "hook"; hook.textContent = topic.dailyHook;
       topicHead.appendChild(hook);
     }
+    if (topic.guide) {
+      var guide = document.createElement("p");
+      guide.className = "guide-line"; guide.id = "guideLine";
+      var gl = document.createElement("span");
+      gl.className = "gl-label"; gl.textContent = "やること：";
+      guide.appendChild(gl);
+      guide.appendChild(document.createTextNode(topic.guide));
+      topicHead.appendChild(guide);
+    }
   }
 
   function renderAll() {
@@ -1851,6 +1933,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     state.activeTopicId = topic.id;
     markExplored(topic.id);
     renderNavs();
+    renderTopicNav();
     renderTopicHead(topic);
     var vals = paramValues(topic);
     renderSliders(topic, vals);
@@ -1869,6 +1952,48 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
     if (effectiveMode() === "mobile") setTab("lab", false);
     renderAll();
   }
+
+  /* ===== 前の単元／次の単元ナビ ===== */
+  function topicIndex(id) {
+    for (var i = 0; i < topics.length; i++) if (topics[i].id === id) return i;
+    return -1;
+  }
+  function setNavBtn(btn, target, fallbackTitle) {
+    if (!btn) return;
+    var titleEl = btn.querySelector(".tn-title");
+    if (target) {
+      btn.disabled = false;
+      if (titleEl) titleEl.textContent = target.title || "";
+    } else {
+      btn.disabled = true;
+      if (titleEl) titleEl.textContent = fallbackTitle;
+    }
+  }
+  function renderTopicNav() {
+    var idx = topicIndex(state.activeTopicId);
+    var prev = (idx > 0) ? topics[idx - 1] : null;
+    var next = (idx >= 0 && idx < topics.length - 1) ? topics[idx + 1] : null;
+    setNavBtn($("prevBtnTop"), prev, "最初の単元です");
+    setNavBtn($("nextBtnTop"), next, "最後の単元です");
+    setNavBtn($("prevBtnBottom"), prev, "最初の単元です");
+    setNavBtn($("nextBtnBottom"), next, "最後の単元です");
+  }
+  function stepTopic(delta) {
+    var idx = topicIndex(state.activeTopicId);
+    if (idx === -1) return;
+    var nidx = idx + delta;
+    if (nidx < 0 || nidx >= topics.length) return;
+    selectTopic(topics[nidx].id, true);
+    window.scrollTo(0, 0);
+  }
+  ["prevBtnTop", "prevBtnBottom"].forEach(function(id){
+    var b = $(id);
+    if (b) b.addEventListener("click", function(){ stepTopic(-1); });
+  });
+  ["nextBtnTop", "nextBtnBottom"].forEach(function(id){
+    var b = $(id);
+    if (b) b.addEventListener("click", function(){ stepTopic(1); });
+  });
 
   function setTab(tab, withSound) {
     document.body.setAttribute("data-tab", tab);
@@ -1963,7 +2088,7 @@ if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS
   });
   $("updateBtn").addEventListener("click", function(){
     var url = new URL(window.location.href);
-    url.searchParams.set("v", "v1.0.0-" + Date.now());
+    url.searchParams.set("v", "v1.0.1-" + Date.now());
     window.location.replace(url.toString());
   });
   document.querySelectorAll("[data-tab-btn]").forEach(function(b){
