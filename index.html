@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>モシモ・マス｜次期学習指導要領対応・中高一貫6年数学ラボ</title>
+<meta name="description" content="モシモ・マスは、次期学習指導要領対応の6分野・全18単元を、スライダー実験で学べる中高一貫6年数学ラボです。">
+<meta property="og:title" content="モシモ・マス｜次期学習指導要領対応・中高一貫6年数学ラボ">
+<meta property="og:description" content="6分野・全18単元をスライダーで動かして実験できる、中高一貫6年の数学ラボ。学年解像度の切替と、つまずき逆引きつき。">
+<meta property="og:type" content="website">
+<meta property="og:image" content="og-image.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+:root{
+  --ink:#1e293b; --ink-soft:#475569; --ink-faint:#94a3b8;
+  --bg:#f1f5f9; --card:#ffffff; --line:#e2e8f0;
+  --accent:#4f46e5; --accent-soft:#eef2ff;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;max-width:100%;}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,"Noto Sans JP",sans-serif;
+  background:var(--bg); color:var(--ink);
+  -webkit-text-size-adjust:100%;
+}
+.math-var{font-family:"Times New Roman","Hiragino Mincho ProN","Yu Mincho",serif; font-style:italic;}
+button{font:inherit; cursor:pointer;}
+h1,h2,h3{margin:0;}
+/* ---------- field colors ---------- */
+[data-field="num"]{--field-c:#4f46e5; --field-bg:#eef2ff;}
+[data-field="geo"]{--field-c:#059669; --field-bg:#ecfdf5;}
+[data-field="chg"]{--field-c:#d97706; --field-bg:#fffbeb;}
+[data-field="dat"]{--field-c:#e11d48; --field-bg:#fff1f2;}
+[data-field="log"]{--field-c:#7c3aed; --field-bg:#f5f3ff;}
+[data-field="soc"]{--field-c:#0891b2; --field-bg:#ecfeff;}
+/* ---------- header ---------- */
+.app-header{
+  position:sticky; top:0; z-index:40;
+  background:rgba(255,255,255,.97); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:8px 12px;
+}
+.brand{display:flex; align-items:baseline; gap:8px; min-width:0;}
+.brand h1{font-size:20px; font-weight:800; letter-spacing:.02em; white-space:nowrap;}
+.brand .version{font-size:11px; color:var(--ink-faint); font-weight:700;}
+.explored-badge{
+  font-size:11px; font-weight:700; color:#92400e;
+  background:#fffbeb; border:1px solid #fde68a; border-radius:999px; padding:3px 9px; white-space:nowrap;
+}
+.header-controls{display:flex; align-items:center; gap:8px; margin-left:auto; flex-wrap:wrap;}
+.seg{display:flex; background:#e2e8f0; border-radius:9px; padding:2px; gap:2px;}
+.seg button{
+  border:0; background:transparent; color:var(--ink-soft);
+  font-size:11px; font-weight:700; padding:5px 9px; border-radius:7px; white-space:nowrap;
+}
+.seg button[aria-pressed="true"]{background:#fff; color:var(--accent); box-shadow:0 1px 3px rgba(15,23,42,.18);}
+.hbtn{
+  border:1px solid var(--line); background:#fff; color:var(--ink-soft);
+  font-size:11px; font-weight:700; padding:6px 10px; border-radius:9px; white-space:nowrap;
+}
+.hbtn:hover{color:var(--accent); border-color:var(--accent);}
+/* ---------- layout base ---------- */
+.layout{
+  display:grid; gap:14px; padding:14px;
+  width:100%; max-width:1600px; margin:0 auto;
+  align-items:start;
+}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px;}
+/* pill bar */
+.pillbar{
+  display:none; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px;
+}
+.pill-group{display:flex; align-items:center; gap:6px; margin-bottom:8px;}
+.pill-group:last-child{margin-bottom:0;}
+.pill-group .pg-name{font-size:11px; font-weight:800; color:var(--field-c,var(--ink-soft)); white-space:nowrap; margin-right:2px;}
+.pill{
+  border:1.5px solid var(--field-c,#cbd5e1); color:var(--ink); background:#fff;
+  font-size:12px; font-weight:700; padding:6px 11px; border-radius:999px; white-space:nowrap; flex:0 0 auto;
+}
+.pill[aria-pressed="true"]{background:var(--field-c); color:#fff;}
+.pill .done{font-size:10px;}
+/* tree nav */
+.tree{display:none;}
+.tree .field-block{margin-bottom:14px;}
+.tree .field-block:last-child{margin-bottom:0;}
+.tree .field-name{font-size:12px; font-weight:800; color:var(--field-c); margin-bottom:2px;}
+.tree .field-desc{font-size:11px; color:var(--ink-faint); margin-bottom:6px; line-height:1.5;}
+.tree .topic-btn{
+  display:block; width:100%; text-align:left; border:1px solid var(--line); background:#fff;
+  border-left:4px solid var(--field-c,#cbd5e1); border-radius:9px;
+  padding:8px 10px; margin-bottom:6px; font-size:13px; font-weight:700; color:var(--ink); line-height:1.4;
+}
+.tree .topic-btn small{display:block; font-size:11px; font-weight:500; color:var(--ink-faint); margin-top:1px;}
+.tree .topic-btn[aria-pressed="true"]{background:var(--field-bg); border-color:var(--field-c);}
+.tree .topic-btn .done{color:var(--field-c); font-size:11px;}
+/* lab */
+.lab{display:flex; flex-direction:column; gap:14px; min-width:0;}
+.topic-head .field-badge{
+  display:inline-block; font-size:11px; font-weight:800; color:var(--field-c);
+  background:var(--field-bg); border-radius:999px; padding:3px 10px; margin-bottom:6px;
+}
+.topic-head h2{font-size:19px; font-weight:800; line-height:1.35;}
+.topic-head .unit{font-size:12px; color:var(--ink-soft); margin-top:3px; font-weight:600;}
+.topic-head .hook{
+  margin-top:9px; font-size:13.5px; line-height:1.65; color:var(--ink);
+  background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:9px 11px;
+}
+.canvas-wrap{position:relative; width:100%; height:320px;}
+#simCanvas{display:block; width:100%; height:100%;}
+.kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+.kpi{background:#f8fafc; border:1px solid var(--line); border-radius:11px; padding:10px 11px; min-width:0;}
+.kpi .k-label{font-size:11px; font-weight:700; color:var(--ink-soft); line-height:1.4; overflow-wrap:anywhere;}
+.kpi .k-val{font-size:19px; font-weight:800; color:var(--accent); margin-top:2px; overflow-wrap:anywhere;}
+.kpi .k-sub{font-size:11px; color:var(--ink-faint); margin-top:1px; line-height:1.45; overflow-wrap:anywhere;}
+.sliders-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;}
+.sliders-head h3{font-size:13px; font-weight:800;}
+.link-btn{border:0; background:none; color:var(--accent); font-size:11.5px; font-weight:700; padding:2px;}
+.slider-row{margin-bottom:13px;}
+.slider-row:last-child{margin-bottom:2px;}
+.slider-row .sr-top{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:5px;}
+.slider-row .sr-label{font-size:12.5px; font-weight:600; color:var(--ink-soft); overflow-wrap:anywhere;}
+.slider-row .sr-val{font-size:13.5px; font-weight:800; color:var(--accent); white-space:nowrap;}
+input[type="range"]{
+  -webkit-appearance:none; appearance:none; width:100%; height:34px; background:transparent; display:block; margin:0;
+}
+input[type="range"]::-webkit-slider-runnable-track{height:8px; border-radius:99px; background:#e0e7ff;}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:28px; height:28px; border-radius:50%;
+  background:var(--accent); border:3px solid #fff; box-shadow:0 1px 5px rgba(15,23,42,.35); margin-top:-10px;
+}
+input[type="range"]::-moz-range-track{height:8px; border-radius:99px; background:#e0e7ff;}
+input[type="range"]::-moz-range-thumb{width:24px; height:24px; border-radius:50%; background:var(--accent); border:3px solid #fff; box-shadow:0 1px 5px rgba(15,23,42,.35);}
+/* side */
+.side{display:flex; flex-direction:column; gap:14px; min-width:0;}
+.side .block h3{font-size:13px; font-weight:800; margin-bottom:8px;}
+.grade-seg{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; background:#f1f5f9; border-radius:10px; padding:4px; margin-bottom:9px;}
+.grade-seg button{
+  border:0; background:transparent; color:var(--ink-soft); font-size:11.5px; font-weight:700;
+  padding:7px 4px; border-radius:7px; line-height:1.3;
+}
+.grade-seg button[aria-pressed="true"]{background:#fff; color:var(--accent); box-shadow:0 1px 3px rgba(15,23,42,.15);}
+.level-text{font-size:13px; line-height:1.75; color:var(--ink); overflow-wrap:anywhere;}
+.guide-text{font-size:13px; line-height:1.75; color:var(--ink); overflow-wrap:anywhere;}
+.guide-formula{
+  margin-top:9px; font-size:13px; color:var(--ink-soft); line-height:1.7;
+  background:#f8fafc; border:1px dashed var(--line); border-radius:9px; padding:8px 10px;
+}
+.rewind-btn{
+  display:block; width:100%; text-align:left; margin-bottom:7px;
+  border:1.5px solid var(--field-c,#cbd5e1); background:#fff; color:var(--ink);
+  border-radius:10px; padding:9px 11px; font-size:13px; font-weight:700; line-height:1.45;
+}
+.rewind-btn small{display:block; font-size:11px; font-weight:500; color:var(--ink-faint); margin-top:1px;}
+.rewind-btn:hover{background:var(--field-bg);}
+.rewind-none{font-size:12.5px; color:var(--ink-faint); line-height:1.6;}
+#sketchCanvas{
+  display:block; width:100%; height:150px; background:#fffdf5;
+  border:1px solid #fde68a; border-radius:10px; touch-action:none; cursor:crosshair;
+}
+.memo-tools{display:flex; justify-content:flex-end; margin:6px 0;}
+#memoText{
+  width:100%; min-height:76px; resize:vertical; font:inherit; font-size:13px; line-height:1.6;
+  border:1px solid var(--line); border-radius:10px; padding:9px 10px; color:var(--ink); background:#fff;
+}
+#memoText:focus{outline:2px solid var(--accent); outline-offset:0; border-color:transparent;}
+/* bottom tabs (mobile) */
+.bottomtabs{
+  display:none; position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:rgba(255,255,255,.98); border-top:1px solid var(--line);
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bottomtabs button{
+  border:0; background:none; padding:9px 2px 10px; min-height:52px;
+  font-size:11px; font-weight:700; color:var(--ink-faint); line-height:1.3;
+}
+.bottomtabs button[aria-pressed="true"]{color:var(--accent); box-shadow:inset 0 2px 0 var(--accent);}
+.footer-note{font-size:11px; color:var(--ink-faint); text-align:center; padding:4px 14px 18px; line-height:1.6;}
+.pillbar,.tree,.lab,.side{min-width:0;}
+.pill-group{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; padding-bottom:2px;}
+.tree{grid-area:tree;} .lab{grid-area:lab;} .side{grid-area:side;} .pillbar{grid-area:pill;}
+</style>
+<style>
+/* ============================================================
+   3モードレイアウト
+   - 手動指定時：body[data-device="mobile|tablet|pc"] の属性ルールで切替（こちらが優先）
+   - 自動時：body[data-device="auto"] のときだけメディアクエリが効く
+   ============================================================ */
+/* ---------- PC ---------- */
+body[data-device="pc"] .layout{
+  grid-template-columns:280px minmax(0,1fr) 330px;
+  grid-template-areas:"tree lab side";
+}
+body[data-device="pc"] .tree{display:block;}
+body[data-device="pc"] .pillbar{display:none;}
+body[data-device="pc"] .bottomtabs{display:none;}
+@media (min-width:1120px){
+  body[data-device="auto"] .layout{
+    grid-template-columns:280px minmax(0,1fr) 330px;
+    grid-template-areas:"tree lab side";
+  }
+  body[data-device="auto"] .tree{display:block;}
+  body[data-device="auto"] .pillbar{display:none;}
+  body[data-device="auto"] .bottomtabs{display:none;}
+}
+/* ---------- Tablet ---------- */
+body[data-device="tablet"] .layout{
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  grid-template-areas:"pill pill" "lab side";
+}
+body[data-device="tablet"] .pillbar{display:block;}
+body[data-device="tablet"] .tree{display:none;}
+body[data-device="tablet"] .bottomtabs{display:none;}
+@media (min-width:768px) and (max-width:1119.98px){
+  body[data-device="auto"] .layout{
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+    grid-template-areas:"pill pill" "lab side";
+  }
+  body[data-device="auto"] .pillbar{display:block;}
+  body[data-device="auto"] .tree{display:none;}
+  body[data-device="auto"] .bottomtabs{display:none;}
+}
+/* ---------- Mobile ---------- */
+body[data-device="mobile"] .layout{
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"lab" "side" "tree";
+  padding:10px 10px 14px;
+}
+body[data-device="mobile"] .pillbar{display:none;}
+body[data-device="mobile"] .bottomtabs{display:grid;}
+body[data-device="mobile"] .footer-note{padding-bottom:84px;}
+body[data-device="mobile"] .canvas-wrap{height:260px;}
+body[data-device="mobile"] .brand h1{font-size:18px;}
+body[data-device="mobile"][data-tab="lab"] .tree,
+body[data-device="mobile"][data-tab="lab"] .side{display:none;}
+body[data-device="mobile"][data-tab="rewind"] .lab,
+body[data-device="mobile"][data-tab="rewind"] .tree{display:none;}
+body[data-device="mobile"][data-tab="rewind"] .side .block-guide,
+body[data-device="mobile"][data-tab="rewind"] .side .block-memo{display:none;}
+body[data-device="mobile"][data-tab="catalog"] .lab,
+body[data-device="mobile"][data-tab="catalog"] .side{display:none;}
+body[data-device="mobile"][data-tab="catalog"] .tree{display:block;}
+body[data-device="mobile"][data-tab="memo"] .lab,
+body[data-device="mobile"][data-tab="memo"] .tree{display:none;}
+body[data-device="mobile"][data-tab="memo"] .side .block-grade,
+body[data-device="mobile"][data-tab="memo"] .side .block-guide,
+body[data-device="mobile"][data-tab="memo"] .side .block-rewind{display:none;}
+@media (max-width:767.98px){
+  body[data-device="auto"] .layout{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"lab" "side" "tree";
+    padding:10px 10px 14px;
+  }
+  body[data-device="auto"] .pillbar{display:none;}
+  body[data-device="auto"] .bottomtabs{display:grid;}
+  body[data-device="auto"] .footer-note{padding-bottom:84px;}
+  body[data-device="auto"] .canvas-wrap{height:260px;}
+  body[data-device="auto"] .brand h1{font-size:18px;}
+  body[data-device="auto"][data-tab="lab"] .tree,
+  body[data-device="auto"][data-tab="lab"] .side{display:none;}
+  body[data-device="auto"][data-tab="rewind"] .lab,
+  body[data-device="auto"][data-tab="rewind"] .tree{display:none;}
+  body[data-device="auto"][data-tab="rewind"] .side .block-guide,
+  body[data-device="auto"][data-tab="rewind"] .side .block-memo{display:none;}
+  body[data-device="auto"][data-tab="catalog"] .lab,
+  body[data-device="auto"][data-tab="catalog"] .side{display:none;}
+  body[data-device="auto"][data-tab="catalog"] .tree{display:block;}
+  body[data-device="auto"][data-tab="memo"] .lab,
+  body[data-device="auto"][data-tab="memo"] .tree{display:none;}
+  body[data-device="auto"][data-tab="memo"] .side .block-grade,
+  body[data-device="auto"][data-tab="memo"] .side .block-guide,
+  body[data-device="auto"][data-tab="memo"] .side .block-rewind{display:none;}
+}
+</style>
+</head>
+<body data-device="auto" data-tab="lab">
+<header class="app-header">
+  <div class="brand">
+    <h1>モシモ・マス</h1>
+    <span class="version">v1.0.0</span>
+  </div>
+  <span class="explored-badge" id="exploredBadge">0/18 実験</span>
+  <div class="header-controls">
+    <div class="seg" role="group" aria-label="表示モード切替">
+      <button type="button" data-set-device="auto" aria-pressed="true">自動</button>
+      <button type="button" data-set-device="mobile" aria-pressed="false">スマホ</button>
+      <button type="button" data-set-device="tablet" aria-pressed="false">タブレット</button>
+      <button type="button" data-set-device="pc" aria-pressed="false">PC</button>
+    </div>
+    <button type="button" class="hbtn" id="soundBtn" aria-pressed="true">音：オン</button>
+    <button type="button" class="hbtn" id="updateBtn">最新の版に更新する</button>
+  </div>
+</header>
+
+<main class="layout" id="layout">
+  <nav class="pillbar" id="pillbar" aria-label="単元ピルバー"></nav>
+
+  <nav class="tree card" id="tree" aria-label="全単元ツリー"></nav>
+
+  <section class="lab" id="labPanel" aria-label="実験">
+    <div class="card topic-head" id="topicHead"></div>
+    <div class="card">
+      <div class="canvas-wrap" id="canvasWrap"><canvas id="simCanvas"></canvas></div>
+    </div>
+    <div class="kpis" id="kpiGrid" aria-live="polite"></div>
+    <div class="card">
+      <div class="sliders-head">
+        <h3>実験スライダー</h3>
+        <button type="button" class="link-btn" id="resetParamsBtn">初期値に戻す</button>
+      </div>
+      <div id="sliderBox"></div>
+    </div>
+  </section>
+
+  <aside class="side" id="sidePanel">
+    <section class="card block block-grade">
+      <h3>解像度（学年）切替</h3>
+      <div class="grade-seg" id="gradeSeg" role="group" aria-label="学年切替"></div>
+      <div class="level-text" id="levelText"></div>
+    </section>
+    <section class="card block block-guide">
+      <h3>数学ガイダンス</h3>
+      <div class="guide-text" id="guidanceText"></div>
+      <p class="guide-formula">スライダーで変数 <span class="math-var">x</span> を動かすと、結果 <span class="math-var">y</span> がどう変わるかが見えてきます。たとえば <span class="math-var">y</span> = <span class="math-var">x</span><sup>2</sup> のように、2乗（<sup>2</sup>）の変化は <span class="math-var">x</span> が大きいほど急になります。</p>
+    </section>
+    <section class="card block block-rewind">
+      <h3>つまずき逆引き</h3>
+      <div id="rewindBox"></div>
+    </section>
+    <section class="card block block-memo">
+      <h3>計算メモ</h3>
+      <canvas id="sketchCanvas" aria-label="お絵描きメモ"></canvas>
+      <div class="memo-tools">
+        <button type="button" class="link-btn" id="clearSketchBtn">描いた線を消す</button>
+      </div>
+      <textarea id="memoText" placeholder="気づいたことを自分の言葉でメモしよう（自動で保存されます）" aria-label="テキストメモ"></textarea>
+    </section>
+  </aside>
+</main>
+
+<p class="footer-note">モシモ・マス v1.0.0｜次期学習指導要領対応・中高一貫6年数学ラボ</p>
+
+<nav class="bottomtabs" id="bottomTabs" aria-label="モバイルタブ">
+  <button type="button" data-tab-btn="lab" aria-pressed="true">実験</button>
+  <button type="button" data-tab-btn="rewind" aria-pressed="false">解像度・逆引</button>
+  <button type="button" data-tab-btn="catalog" aria-pressed="false">全18単元</button>
+  <button type="button" data-tab-btn="memo" aria-pressed="false">メモ</button>
+</nav>
+
+<script>
+"use strict";
+/* ===== 単元データ（ビルド時に topics.js が差し込まれます） ===== */
+// Extracted mechanically from ~/workspace/user/files/6.html (prototype HTML, <script> lines 115-1267)
+// Source: const FIELDS, const GRADE_LEVELS, const TOPICS - contents unchanged.
+
+const FIELDS = [
+  { id: 'num', name: '1. 数と式', color: 'indigo', badge: 'bg-indigo-100 text-indigo-800', desc: '割合・文字式・平方根・複素数・方程式' },
+  { id: 'geo', name: '2. 図形', color: 'emerald', badge: 'bg-emerald-100 text-emerald-800', desc: '三平方・三角比・ベクトル・複素数平面' },
+  { id: 'chg', name: '3. 変化と関係', color: 'amber', badge: 'bg-amber-100 text-amber-800', desc: '比例・二次関数・指数対数・数列・微積' },
+  { id: 'dat', name: '4. データと確からしさ', color: 'rose', badge: 'bg-rose-100 text-rose-800', desc: '箱ひげ図・確率期待値・統計的推測と検定' },
+  { id: 'log', name: '5. 論証', color: 'violet', badge: 'bg-violet-100 text-violet-800', desc: '必要十分条件・帰納法・背理法・論理検証' },
+  { id: 'soc', name: '6. 社会を読み解く数学', color: 'cyan', badge: 'bg-cyan-100 text-cyan-800', desc: '行列とAI・拡散モデル・最適化（新設分野）' }
+];
+
+const GRADE_LEVELS = [
+  { id: 'elem_j1', label: '小接続〜中1', short: '中1' },
+  { id: 'j2_j3', label: '中2〜中3', short: '中2-3' },
+  { id: 'h1', label: '高1（数Ⅰ・統合）', short: '高1' },
+  { id: 'h2_h3', label: '高2〜3（発展）', short: '高2-3' }
+];
+
+const TOPICS = [
+  // --- 1. 数と式 ---
+  {
+    id: 'num_discount',
+    field: 'num',
+    title: 'コンビニ割引クーポン対決',
+    unit: '割合・比・文字式・一次不等式',
+    dailyHook: '「20%オフ」と「200円引き」のクーポン、会計がいくらのとき逆転する？',
+    guidance: '買い物の損得だけでなく、ビジネスの利益率や税制設計はすべて文字式と不等式でルール化されています。',
+    rewindIds: [],
+    params: [
+      { key: 'price', label: '買う金額 (円)', min: 200, max: 3000, step: 50, def: 800 },
+      { key: 'pct', label: '割引率 (%)', min: 5, max: 50, step: 5, def: 20 },
+      { key: 'yen', label: '定額引き (円)', min: 50, max: 500, step: 50, def: 200 }
+    ],
+    compute(v) {
+      const p1 = Math.round(v.price * (1 - v.pct / 100));
+      const p2 = Math.max(0, v.price - v.yen);
+      const breakEven = Math.round((v.yen / (v.pct / 100)));
+      const winner = p1 < p2 ? `${v.pct}%オフが ${p2 - p1}円 お得` : p2 < p1 ? `${v.yen}円引きが ${p1 - p2}円 お得` : 'ちょうど同じ金額！';
+      return {
+        kpis: [
+          { label: `${v.pct}%オフ後`, val: `${p1}円`, sub: `割引 ${v.price - p1}円` },
+          { label: `${v.yen}円引き後`, val: `${p2}円`, sub: `実質 ${Math.round((v.yen / v.price)*100)}%引` },
+          { label: '逆転ライン', val: `${breakEven}円`, sub: winner }
+        ],
+        breakEven, p1, p2
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      // Axes
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+      const maxX = 3000, maxY = 3000;
+      const toX = x => pad + (x / maxX) * gw;
+      const toY = y => h - pad - (y / maxY) * gh;
+      // Grid
+      ctx.fillStyle = '#64748b'; ctx.font = '11px Inter, sans-serif';
+      for (let x = 0; x <= 3000; x += 1000) {
+        ctx.fillText(`${x}円`, toX(x) - 14, h - pad + 16);
+      }
+      // Line 1: pct off
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      ctx.lineTo(toX(maxX), toY(maxX * (1 - v.pct / 100)));
+      ctx.stroke();
+      // Line 2: yen off
+      ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      ctx.lineTo(toX(v.yen), toY(0));
+      ctx.lineTo(toX(maxX), toY(maxX - v.yen));
+      ctx.stroke();
+      // Break-even marker
+      if (res.breakEven <= maxX) {
+        const bx = toX(res.breakEven), by = toY(res.breakEven - v.yen);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillText(`逆転: ${res.breakEven}円`, Math.min(bx + 8, w - 95), Math.max(by - 10, 20));
+      }
+      // Current price marker
+      const cx = toX(v.price);
+      ctx.strokeStyle = '#cbd5e1'; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(cx, pad); ctx.lineTo(cx, h - pad); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(cx, toY(res.p1), 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f43f5e'; ctx.beginPath(); ctx.arc(cx, toY(res.p2), 6, 0, Math.PI * 2); ctx.fill();
+      // Legend
+      ctx.fillStyle = '#4f46e5'; ctx.fillText(`■ ${v.pct}%オフ`, pad + 10, pad + 14);
+      ctx.fillStyle = '#f43f5e'; ctx.fillText(`■ ${v.yen}円引き`, pad + 95, pad + 14);
+    },
+    levels: {
+      elem_j1: '「元の値段 × (1 - 割引率)」と「元の値段 - 割引額」を比べてみよう。文字 x を使うと x(1 - 0.2) < x - 200 と表せます。',
+      j2_j3: '2つの直線の交点（連立方程式の解）が「逆転ライン」です。傾きが緩やかな %オフ の方が、高額になるほどお得になります。',
+      h1: '一次不等式 (1 - p/100)x < x - d を解くと x > 100d/p。どんな割引率と定額でも成り立つ一般式を作れます。',
+      h2_h3: 'さらに「ポイント還元」や「上限金額」を加えると区分線形関数になり、最適クーポン選択アルゴリズムの基礎になります。'
+    }
+  },
+  {
+    id: 'num_sqrt_complex',
+    field: 'num',
+    title: '面積と回転の数：√2から虚数 i へ',
+    unit: '平方根・無理数・複素数（iの回転）',
+    dailyHook: '1辺が1の正方形の「面積を2倍」にする辺の長さは？さらに「90度回転」させる数とは？',
+    guidance: '実数だけでは表せない「回転や波」の計算に虚数 i が使われ、電気回路・量子力学・ゲームの回転処理を支えています。',
+    rewindIds: ['num_discount'],
+    params: [
+      { key: 'area', label: '正方形の面積', min: 1, max: 16, step: 1, def: 2 },
+      { key: 'rot', label: 'i を掛ける回数 (90°回転)', min: 0, max: 4, step: 1, def: 1 }
+    ],
+    compute(v) {
+      const side = Math.sqrt(v.area);
+      const rotLabels = ['1 (0°)', 'i (90°)', '-1 (180°)', '-i (270°)', '1 (360°)'];
+      const isInt = Number.isInteger(side);
+      return {
+        kpis: [
+          { label: '1辺の長さ', val: isInt ? `${side}` : `√${v.area} ≈ ${side.toFixed(3)}`, sub: isInt ? '有理数（ぴったり）' : '無理数（無限に続く）' },
+          { label: `i^${v.rot} の位置`, val: rotLabels[v.rot], sub: '2回掛けると -1！' },
+          { label: '対角線(1辺×√2)', val: (side * Math.SQRT2).toFixed(2), sub: 'A4用紙の比率と同じ' }
+        ],
+        side
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      // Left: Square of area
+      const maxBox = Math.min(w * 0.35, h * 0.65);
+      const boxSize = (res.side / 4) * maxBox;
+      const lx = w * 0.25 - boxSize / 2, ly = h * 0.5 - boxSize / 2;
+      ctx.fillStyle = 'rgba(79, 70, 229, 0.12)';
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 2.5;
+      ctx.fillRect(lx, ly, boxSize, boxSize);
+      ctx.strokeRect(lx, ly, boxSize, boxSize);
+      ctx.fillStyle = '#1e1b4b'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`面積 ${v.area}`, lx + 6, ly + 18);
+      ctx.fillText(`辺 = ${Number.isInteger(res.side) ? res.side : '√'+v.area}`, lx, ly + boxSize + 18);
+
+      // Right: Complex plane rotation
+      const cx = w * 0.72, cy = h * 0.5, r = Math.min(w * 0.2, h * 0.36);
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(cx - r - 15, cy); ctx.lineTo(cx + r + 15, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - r - 15); ctx.lineTo(cx, cy + r + 15); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      const angle = -v.rot * (Math.PI / 2);
+      const px = cx + r * Math.cos(angle), py = cy + r * Math.sin(angle);
+      ctx.strokeStyle = '#f43f5e'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('実軸(1)', cx + r + 4, cy + 4);
+      ctx.fillText('虚軸(i)', cx - 16, cy - r - 8);
+      ctx.fillText(`×i を ${v.rot}回`, cx - 28, cy + r + 20);
+    },
+    levels: {
+      elem_j1: '面積が4なら1辺は2ですが、面積が2の正方形の1辺は「1.4142...」と割り切れません。コピー用紙の縦横比もこの仲間の 1:1.414 です。',
+      j2_j3: '2乗して a になる正の数を √a（平方根）と呼びます。小数で表せない「無理数」の世界がここで広がります。',
+      h1: '2乗して -1 になる数 i（虚数単位）を導入すると、x² + 1 = 0 などのすべての方程式が解けるようになります。',
+      h2_h3: '複素数平面では「i を掛ける＝反時計回りに90°回転」を意味します。極形式 r(cosθ + i sinθ) で回転を自在に操れます。'
+    }
+  },
+  {
+    id: 'num_factor',
+    field: 'num',
+    title: '面積パズルで因数分解＆スマホプラン',
+    unit: '展開・因数分解・二次方程式',
+    dailyHook: '「x² + (a+b)x + ab」って呪文？実は縦(x+a)・横(x+b)の長方形の面積パズルそのもの！',
+    guidance: '複雑な式を掛け算の形に分解（因数分解）することで、損益の境界や最適サイズが一瞬で見抜けるようになります。',
+    rewindIds: ['num_discount'],
+    params: [
+      { key: 'a', label: '縦の増分 a', min: 1, max: 6, step: 1, def: 2 },
+      { key: 'b', label: '横の増分 b', min: 1, max: 6, step: 1, def: 3 }
+    ],
+    compute(v) {
+      const sum = v.a + v.b;
+      const prod = v.a * v.b;
+      return {
+        kpis: [
+          { label: '掛け算の形（因数分解）', val: `(x + ${v.a})(x + ${v.b})`, sub: '長方形の縦×横' },
+          { label: 'バラした形（展開）', val: `x² + ${sum}x + ${prod}`, sub: '4つのパーツの合計' },
+          { label: '面積が0になるx', val: `x = -${v.a}, -${v.b}`, sub: '二次方程式の解' }
+        ],
+        sum, prod
+      };
+    },
+    draw(ctx, w, h, v) {
+      ctx.clearRect(0, 0, w, h);
+      const scale = Math.min((w - 100) / 14, (h - 90) / 14);
+      const xLen = 6 * scale, aLen = v.a * scale, bLen = v.b * scale;
+      const ox = (w - (xLen + bLen)) / 2, oy = (h - (xLen + aLen)) / 2;
+
+      const drawBox = (x, y, bw, bh, bg, border, label) => {
+        ctx.fillStyle = bg; ctx.fillRect(x, y, bw, bh);
+        ctx.strokeStyle = border; ctx.lineWidth = 2; ctx.strokeRect(x, y, bw, bh);
+        ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText(label, x + bw / 2 - 14, y + bh / 2 + 4);
+      };
+      drawBox(ox, oy, xLen, xLen, '#e0e7ff', '#4f46e5', 'x²');
+      drawBox(ox + xLen, oy, bLen, xLen, '#dcfce7', '#10b981', `${v.b}x`);
+      drawBox(ox, oy + xLen, xLen, aLen, '#fef3c7', '#f59e0b', `${v.a}x`);
+      drawBox(ox + xLen, oy + xLen, bLen, aLen, '#ffe4e6', '#f43f5e', `${v.a * v.b}`);
+
+      ctx.fillStyle = '#475569'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`x + ${v.b}`, ox + (xLen + bLen) / 2 - 15, oy - 10);
+      ctx.fillText(`x + ${v.a}`, ox - 42, oy + (xLen + aLen) / 2);
+    },
+    levels: {
+      elem_j1: '分配法則「(縦) × (横)」を面積図で見てみよう。4つの部屋の面積を足すと全体の面積になります。',
+      j2_j3: '足して a+b、掛けて ab になる2数を見つけるのが因数分解！図形の縦と横の長さを当てるパズルと同じです。',
+      h1: 'たすき掛けや3次式の因数分解も、高次元のブロック分割として同じ原理で整理できます。',
+      h2_h3: '因数定理や剰余の定理を使うと、どんな高次方程式も「割り切れる因子」から解を特定できるようになります。'
+    }
+  },
+
+  // --- 2. 図形 ---
+  {
+    id: 'geo_pythagoras',
+    field: 'geo',
+    title: 'スマホ・TV画面インチと三平方の定理',
+    unit: '平面図形・相似比・三平方の定理',
+    dailyHook: '「6.1インチのスマホ」と「55インチのテレビ」、実は縦と横の長さではなく対角線を測ってる！',
+    guidance: '画面の比率（16:9など）と三平方の定理を使えば、スペック表の「インチ」だけで実際の縦横cmが計算できます。',
+    rewindIds: ['num_sqrt_complex'],
+    params: [
+      { key: 'inch', label: '画面サイズ (インチ)', min: 5, max: 65, step: 1, def: 13 },
+      { key: 'ratio', label: '横の比率 (縦9に対して)', min: 12, max: 21, step: 1, def: 16 }
+    ],
+    compute(v) {
+      const diagCm = v.inch * 2.54;
+      const k = diagCm / Math.sqrt(v.ratio * v.ratio + 81);
+      const widthCm = v.ratio * k;
+      const heightCm = 9 * k;
+      return {
+        kpis: [
+          { label: '横の長さ', val: `${widthCm.toFixed(1)} cm`, sub: `比率 ${v.ratio}` },
+          { label: '縦の長さ', val: `${heightCm.toFixed(1)} cm`, sub: '比率 9' },
+          { label: '対角線', val: `${diagCm.toFixed(1)} cm`, sub: `${v.inch}インチ × 2.54` }
+        ],
+        widthCm, heightCm, diagCm
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const maxW = w * 0.7, maxH = h * 0.68;
+      const scale = Math.min(maxW / res.widthCm, maxH / res.heightCm) * (0.4 + 0.6 * (v.inch / 65));
+      const rw = res.widthCm * scale, rh = res.heightCm * scale;
+      const ox = (w - rw) / 2, oy = (h - rh) / 2;
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(ox - 6, oy - 6, rw + 12, rh + 12);
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(ox, oy, rw, rh);
+
+      // Diagonal
+      ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(ox, oy + rh); ctx.lineTo(ox + rw, oy); ctx.stroke();
+
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`横 ${res.widthCm.toFixed(1)}cm`, ox + rw / 2 - 30, oy + rh + 22);
+      ctx.fillText(`縦 ${res.heightCm.toFixed(1)}cm`, ox + rw + 12, oy + rh / 2);
+      ctx.fillStyle = '#e11d48';
+      ctx.fillText(`${v.inch}" (${res.diagCm.toFixed(1)}cm)`, ox + rw / 2 - 40, oy + rh / 2 - 8);
+    },
+    levels: {
+      elem_j1: 'テレビやスマホは形が同じ（拡大・縮小＝相似）なので、比率が分かれば実際の大きさの目安がつきます。',
+      j2_j3: '三平方の定理 a² + b² = c² が主役！16² + 9² = 337 なので、対角線は √337 ≈ 18.36 の比になります。',
+      h1: '対角線と角度θを使えば、横 = d cosθ、縦 = d sinθ と三角比でスマートに表せます。',
+      h2_h3: '面積の比較（インチが2倍になると画面の面積は4倍！）や解像度(dpi)の計算にも相似比の2乗が直結します。'
+    }
+  },
+  {
+    id: 'geo_trig',
+    field: 'geo',
+    title: '観覧車の高さ＆波（sin・cos・tan）',
+    unit: '三角比・三角関数・単位円',
+    dailyHook: '観覧車に乗って角度がθのとき、地上何メートルにいる？波のグラフの正体とは？',
+    guidance: 'sin・cosは「円運動を横から見た高さ・影」です。音・光・電波・地震波の解析はすべて三角関数で動いています。',
+    rewindIds: ['geo_pythagoras'],
+    params: [
+      { key: 'deg', label: '回転角度 θ (度)', min: 0, max: 360, step: 5, def: 45 },
+      { key: 'rad', label: '観覧車の半径 (m)', min: 10, max: 60, step: 5, def: 30 }
+    ],
+    compute(v) {
+      const rRad = (v.deg * Math.PI) / 180;
+      const sinV = Math.sin(rRad);
+      const cosV = Math.cos(rRad);
+      const height = v.rad + v.rad * sinV;
+      return {
+        kpis: [
+          { label: 'ゴンドラの高さ', val: `${height.toFixed(1)} m`, sub: `中心${v.rad}m + ${v.rad}×sinθ` },
+          { label: 'sin θ (高さ比)', val: sinV.toFixed(3), sub: '上下の位置' },
+          { label: 'cos θ (横位置比)', val: cosV.toFixed(3), sub: '左右の位置' }
+        ],
+        rRad, sinV, cosV, height
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w * 0.28, cy = h * 0.52, r = Math.min(w * 0.18, h * 0.35);
+      // Ferris wheel
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - r - 10, cy); ctx.lineTo(cx + r + 10, cy); ctx.stroke();
+      // Gondola
+      const gx = cx + r * res.cosV, gy = cy - r * res.sinV;
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(gx, gy); ctx.stroke();
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath(); ctx.arc(gx, gy, 7, 0, Math.PI * 2); ctx.fill();
+
+      // Sine wave on right
+      const wx0 = w * 0.52, ww = w * 0.42;
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(wx0, cy); ctx.lineTo(wx0 + ww, cy); ctx.stroke();
+      ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= 360; i += 5) {
+        const px = wx0 + (i / 360) * ww;
+        const py = cy - r * Math.sin((i * Math.PI) / 180);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      // Current dot on wave
+      const curX = wx0 + (v.deg / 360) * ww;
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = '#f43f5e';
+      ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(curX, gy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath(); ctx.arc(curX, gy, 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('sin θ の波（高さの推移）', wx0, cy - r - 14);
+    },
+    levels: {
+      elem_j1: '円をぐるっと回ると、高さは上がったり下がったりする「きれいな波」を描きます。',
+      j2_j3: '直角三角形の辺の比（30°・45°・60°の特別な三角形）が、三角比の出発点です。',
+      h1: '90°を超えても「単位円上の点のy座標＝sinθ、x座標＝cosθ」と定義すれば、観覧車1周分がすべて表せます。',
+      h2_h3: '弧度法（ラジアン）や三角関数の合成・微分を使うと、物理の単振動や音の波形（フーリエ解析）に直結します。'
+    }
+  },
+  {
+    id: 'geo_vector',
+    field: 'geo',
+    title: 'ドローンの風合成＆ベクトル操作',
+    unit: '平面ベクトル・空間ベクトル・内積',
+    dailyHook: '東へ飛ぶドローンに北からの横風が吹いたら、実際はどっちへどれくらい進む？',
+    guidance: 'ゲームのキャラ移動、3Dグラフィックスの光の反射、AIの意味空間（単語ベクトル）など現代技術の要です。',
+    rewindIds: ['geo_pythagoras', 'geo_trig'],
+    params: [
+      { key: 'droneSpd', label: 'ドローン推力 (m/s)', min: 2, max: 20, step: 1, def: 10 },
+      { key: 'windSpd', label: '横風の強さ (m/s)', min: 0, max: 15, step: 1, def: 6 },
+      { key: 'windDeg', label: '風の向き (度)', min: 0, max: 360, step: 15, def: 90 }
+    ],
+    compute(v) {
+      const wr = (v.windDeg * Math.PI) / 180;
+      const rx = v.droneSpd + v.windSpd * Math.cos(wr);
+      const ry = v.windSpd * Math.sin(wr);
+      const totalSpd = Math.hypot(rx, ry);
+      const driftDeg = (Math.atan2(ry, rx) * 180) / Math.PI;
+      return {
+        kpis: [
+          { label: '実際の合成速度', val: `${totalSpd.toFixed(1)} m/s`, sub: 'ベクトルの和 |a + b|' },
+          { label: '流される角度', val: `${driftDeg.toFixed(1)}°`, sub: '進行方向からのズレ' },
+          { label: '追い風/向かい風成分', val: `${(v.windSpd * Math.cos(wr)).toFixed(1)} m/s`, sub: '内積の考え方' }
+        ],
+        rx, ry, wr
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const ox = w * 0.25, oy = h * 0.65, scale = Math.min(w, h) / 42;
+      const arrow = (x1, y1, x2, y2, col, label) => {
+        ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        const ang = Math.atan2(y2 - y1, x2 - x1);
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 10 * Math.cos(ang - 0.4), y2 - 10 * Math.sin(ang - 0.4));
+        ctx.lineTo(x2 - 10 * Math.cos(ang + 0.4), y2 - 10 * Math.sin(ang + 0.4));
+        ctx.closePath(); ctx.fill();
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillText(label, (x1 + x2) / 2 + 6, (y1 + y2) / 2 - 6);
+      };
+      const dx = ox + v.droneSpd * scale, dy = oy;
+      const wx = v.windSpd * Math.cos(res.wr) * scale, wy = -v.windSpd * Math.sin(res.wr) * scale;
+      // Drone vector
+      arrow(ox, oy, dx, dy, '#4f46e5', `ドローン(${v.droneSpd})`);
+      // Wind vector from tip
+      if (v.windSpd > 0) {
+        arrow(dx, dy, dx + wx, dy + wy, '#06b6d4', `風(${v.windSpd})`);
+      }
+      // Resultant
+      arrow(ox, oy, dx + wx, dy + wy, '#f43f5e', '実際の進路');
+    },
+    levels: {
+      elem_j1: '矢印の「長さ（大きさ）」と「向き」をそのままつなぎ合わせると、2つの力が合わさった結果が見えます。',
+      j2_j3: '平行四辺形の対角線が力の合成です。直角に交わるときは三平方の定理で長さが計算できます。',
+      h1: '高校数学A・B・C統合科目で学ぶ「幾何ベクトル」。座標成分 (x, y) に分解すると足し算だけで進路が求まります。',
+      h2_h3: '内積 a・b = |a||b|cosθ を使うと、風がどれだけ進行を助けたか（仕事量）や2つのデータの類似度が測れます。'
+    }
+  },
+
+  // --- 3. 変化と関係 ---
+  {
+    id: 'chg_linear',
+    field: 'chg',
+    title: 'サブスク元取り＆お風呂の水張り',
+    unit: '比例・反比例・一次関数',
+    dailyHook: '月額1,200円の映画サブスク、月何本見れば1本レンタル(400円)より得になる？',
+    guidance: '固定費＋従量課金のビジネスモデル（電気代・ジム・クラウド料金）の比較はすべて一次関数です。',
+    rewindIds: ['num_discount'],
+    params: [
+      { key: 'subFee', label: 'サブスク月額 (円)', min: 500, max: 3000, step: 100, def: 1200 },
+      { key: 'unitPrice', label: '都度レンタル (円/回)', min: 100, max: 800, step: 50, def: 400 },
+      { key: 'times', label: '月に使う回数', min: 1, max: 15, step: 1, def: 5 }
+    ],
+    compute(v) {
+      const payAsYouGo = v.unitPrice * v.times;
+      const diff = payAsYouGo - v.subFee;
+      const breakTimes = Math.ceil(v.subFee / v.unitPrice);
+      return {
+        kpis: [
+          { label: '都度払いの合計', val: `${payAsYouGo}円`, sub: `y = ${v.unitPrice}x` },
+          { label: 'サブスク損益', val: diff >= 0 ? `${diff}円 お得` : `${-diff}円 損`, sub: diff >= 0 ? '元が取れた！' : '都度払いが安い' },
+          { label: '元が取れる回数', val: `${breakTimes}回〜`, sub: `1回あたり ${Math.round(v.subFee / v.times)}円` }
+        ],
+        payAsYouGo, breakTimes
+      };
+    },
+    draw(ctx, w, h, v) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const maxX = 15, maxY = 6000;
+      const toX = x => pad + (x / maxX) * gw;
+      const toY = y => h - pad - Math.min(1, y / maxY) * gh;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      // Sub fee (constant)
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(toX(0), toY(v.subFee)); ctx.lineTo(toX(maxX), toY(v.subFee)); ctx.stroke();
+      // Pay-as-you-go (proportional)
+      ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(toX(0), toY(0)); ctx.lineTo(toX(maxX), toY(v.unitPrice * maxX)); ctx.stroke();
+
+      // Current point
+      const cx = toX(v.times);
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = '#cbd5e1';
+      ctx.beginPath(); ctx.moveTo(cx, pad); ctx.lineTo(cx, h - pad); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.arc(cx, toY(v.unitPrice * v.times), 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(cx, toY(v.subFee), 6, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#4f46e5'; ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText(`サブスク定額 ${v.subFee}円`, pad + 8, toY(v.subFee) - 8);
+      ctx.fillStyle = '#d97706';
+      ctx.fillText(`都度払い y=${v.unitPrice}x`, pad + 8, pad + 14);
+    },
+    levels: {
+      elem_j1: '回数が2倍、3倍になると合計金額も2倍、3倍になるのが「比例」です。定額ラインを超えた瞬間が得になります。',
+      j2_j3: '都度払いは原点を通る比例 y = ax、サブスクに基本料＋追加料金がある場合は切片 b が加わった一次関数 y = ax + b です。',
+      h1: '1回あたりの実質単価（y = 1200/x）は「反比例」のグラフになり、使えば使うほど単価が下がります。',
+      h2_h3: '限界費用と平均費用の交点（損益分岐点分析）として、経済学や経営判断の基礎モデルになります。'
+    }
+  },
+  {
+    id: 'chg_quad',
+    field: 'chg',
+    title: 'バスケシュート＆車のブレーキ距離',
+    unit: '二次関数 y=ax²・放物線・最大最小',
+    dailyHook: '時速が2倍になると、ブレーキを踏んでから止まるまでの距離は何倍になる？',
+    guidance: '車の安全設計、スポーツの弾道計算、アンテナのパラボラ形状など、加速度が関わる現象はすべて二次関数です。',
+    rewindIds: ['chg_linear'],
+    params: [
+      { key: 'speed', label: '車の時速 (km/h)', min: 20, max: 120, step: 10, def: 60 },
+      { key: 'road', label: '路面状態 (1:乾〜3:雪)', min: 1, max: 3, step: 1, def: 1 }
+    ],
+    compute(v) {
+      // 空走距離 (約0.75秒) + 制動距離 (v^2 / (254 * mu))
+      const mu = v.road === 1 ? 0.7 : v.road === 2 ? 0.45 : 0.2;
+      const reaction = (v.speed * 1000 / 3600) * 0.75;
+      const braking = (v.speed * v.speed) / (254 * mu);
+      const total = reaction + braking;
+      return {
+        kpis: [
+          { label: '止まるまでの総距離', val: `${total.toFixed(1)} m`, sub: '空走 + 制動' },
+          { label: 'ブレーキ制動距離', val: `${braking.toFixed(1)} m`, sub: '速度の「2乗」に比例！' },
+          { label: '危険反応(空走)距離', val: `${reaction.toFixed(1)} m`, sub: '速度の「1乗」に比例' }
+        ],
+        reaction, braking, total, mu
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const maxX = 120, maxY = 180;
+      const toX = x => pad + (x / maxX) * gw;
+      const toY = y => h - pad - Math.min(1, y / maxY) * gh;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      // Curve
+      ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let s = 0; s <= 120; s += 5) {
+        const d = (s * 1000 / 3600) * 0.75 + (s * s) / (254 * res.mu);
+        if (s === 0) ctx.moveTo(toX(s), toY(d)); else ctx.lineTo(toX(s), toY(d));
+      }
+      ctx.stroke();
+
+      // Current point
+      const cx = toX(v.speed), cy = toY(res.total);
+      ctx.fillStyle = '#e11d48';
+      ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`${v.speed}km/h → ${res.total.toFixed(1)}m`, Math.min(cx - 20, w - 140), Math.max(cy - 14, 24));
+      ctx.fillStyle = '#64748b'; ctx.font = '11px Inter, sans-serif';
+      ctx.fillText('速度が2倍になると制動距離は4倍（2²）に跳ね上がる！', pad + 8, pad + 14);
+    },
+    levels: {
+      elem_j1: 'スピードが2倍になると止まる距離は2倍ではなく4倍になります。雨や雪の日はさらに急に伸びます。',
+      j2_j3: 'y = ax² のグラフ（放物線）です。a の値が大きい（滑りやすい路面）ほどグラフの開きが急になります。',
+      h1: '空走距離（一次関数 bx）と制動距離（二次関数 ax²）を足した y = ax² + bx の平方完成で、頂点の位置もわかります。',
+      h2_h3: '運動エネルギー (1/2)mv² を摩擦力 μmg で割ることで、なぜ「速度の2乗」になるのかが物理と微積分で証明できます。'
+    }
+  },
+  {
+    id: 'chg_exp_calc',
+    field: 'chg',
+    title: 'SNSバズ＆複利貯金の指数爆発',
+    unit: '指数・対数・数列・微分積分',
+    dailyHook: '1人が毎日2人にシェアしたら、30日後には何人に届く？「増える勢い（微分）」も見てみよう！',
+    guidance: 'ウイルスの感染、SNSの拡散、投資の複利、AIの計算量増加など、世の中の急激な変化は「指数」で起きます。',
+    rewindIds: ['chg_linear', 'chg_quad'],
+    params: [
+      { key: 'rate', label: '1日あたりの増加倍率 (倍)', min: 1.1, max: 2.0, step: 0.1, def: 1.5 },
+      { key: 'days', label: '経過日数 (日)', min: 1, max: 20, step: 1, def: 12 }
+    ],
+    compute(v) {
+      const total = Math.round(Math.pow(v.rate, v.days));
+      const speed = Math.round(total * Math.log(v.rate)); // derivative
+      const doubling = Math.log(2) / Math.log(v.rate);
+      return {
+        kpis: [
+          { label: `${v.days}日目のリーチ数`, val: `${total.toLocaleString()}人`, sub: `${v.rate}^${v.days}` },
+          { label: 'その日の増加スピード', val: `+${speed.toLocaleString()}人/日`, sub: '微分（接線の傾き）' },
+          { label: '2倍になる日数', val: `約${doubling.toFixed(1)}日`, sub: '対数 log で計算' }
+        ],
+        total
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const maxX = 20, maxY = Math.max(100, Math.pow(v.rate, v.days) * 1.15);
+      const toX = x => pad + (x / maxX) * gw;
+      const toY = y => h - pad - Math.min(1, y / maxY) * gh;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+      ctx.beginPath(); ctx.moveTo(toX(0), h - pad);
+      for (let d = 0; d <= v.days; d++) {
+        ctx.lineTo(toX(d), toY(Math.pow(v.rate, d)));
+      }
+      ctx.lineTo(toX(v.days), h - pad); ctx.closePath(); ctx.fill();
+
+      ctx.strokeStyle = '#d97706'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let d = 0; d <= 20; d++) {
+        const y = Math.pow(v.rate, d);
+        if (d === 0) ctx.moveTo(toX(d), toY(y)); else ctx.lineTo(toX(d), toY(y));
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`累計(積分イメージ): ${res.total.toLocaleString()}人`, pad + 10, pad + 16);
+    },
+    levels: {
+      elem_j1: '同じ数を何度も掛ける（累乗）と、最初はゆっくりでも途中から一気に爆発的に増えます。',
+      j2_j3: '等比数列の考え方です。100円が毎日1.5倍になると、最初は小さいのに後半の伸びがすさまじいのが見えます。',
+      h1: 'y = a^x の指数関数です。逆に「1万人になるのは何日目？」と逆算したいときに使うのが対数（log）です。',
+      h2_h3: 'グラフの傾きが「その瞬間の増加スピード（微分）」、塗りつぶされた面積が「これまでの累計（積分）」を表します。'
+    }
+  },
+
+  // --- 4. データと確からしさ ---
+  {
+    id: 'dat_dist',
+    field: 'dat',
+    title: 'テスト点数分布＆平均のワナ（外れ値）',
+    unit: '代表値・箱ひげ図・標準偏差・正規分布',
+    dailyHook: '「平均点は60点」なのに、なぜか自分の点数が真ん中より下？外れ値の影響を実験！',
+    guidance: 'ニュースの「平均年収」や「偏差値」に騙されないためには、平均だけでなく散らばり（箱ひげ図・標準偏差）を見る力が必須です。',
+    rewindIds: ['num_discount'],
+    params: [
+      { key: 'outlier', label: '超天才1人の点数', min: 50, max: 100, step: 5, def: 100 },
+      { key: 'spread', label: 'クラスのばらつき', min: 5, max: 25, step: 2, def: 12 }
+    ],
+    compute(v) {
+      const base = [35, 42, 48, 50, 52, 55, 58, 60, 65];
+      const scores = base.map(s => Math.max(0, Math.min(100, Math.round(52 + (s - 52) * (v.spread / 12)))));
+      scores.push(v.outlier);
+      scores.sort((a, b) => a - b);
+      const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+      const median = (scores[4] + scores[5]) / 2;
+      const sd = Math.sqrt(scores.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / scores.length);
+      return {
+        kpis: [
+          { label: '平均点', val: `${mean.toFixed(1)}点`, sub: '外れ値に引っ張られる' },
+          { label: '中央値 (メジアン)', val: `${median.toFixed(1)}点`, sub: 'ど真ん中の人の点数' },
+          { label: '標準偏差', val: `${sd.toFixed(1)}点`, sub: '散らばりの大きさ' }
+        ],
+        scores, mean, median, q1: scores[2], q3: scores[7]
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 40, gw = w - pad * 2;
+      const toX = s => pad + (s / 100) * gw;
+      // Axis 0-100
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, h - 45); ctx.lineTo(w - pad, h - 45); ctx.stroke();
+      ctx.fillStyle = '#64748b'; ctx.font = '11px Inter, sans-serif';
+      for (let s = 0; s <= 100; s += 20) ctx.fillText(`${s}`, toX(s) - 6, h - 25);
+
+      // Plot dots
+      res.scores.forEach((s, idx) => {
+        ctx.fillStyle = idx === res.scores.length - 1 ? '#e11d48' : '#4f46e5';
+        ctx.beginPath(); ctx.arc(toX(s), h - 65 - (idx % 2) * 14, 6, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // Boxplot
+      const by = h * 0.32, bh = 34;
+      ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(toX(res.scores[0]), by + bh / 2); ctx.lineTo(toX(res.q1), by + bh / 2);
+      ctx.moveTo(toX(res.q3), by + bh / 2); ctx.lineTo(toX(res.scores[9]), by + bh / 2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+      ctx.fillRect(toX(res.q1), by, toX(res.q3) - toX(res.q1), bh);
+      ctx.strokeRect(toX(res.q1), by, toX(res.q3) - toX(res.q1), bh);
+      // Median line
+      ctx.strokeStyle = '#059669'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(toX(res.median), by); ctx.lineTo(toX(res.median), by + bh); ctx.stroke();
+      // Mean line
+      ctx.strokeStyle = '#e11d48'; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(toX(res.mean), by - 12); ctx.lineTo(toX(res.mean), by + bh + 12); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#e11d48'; ctx.fillText(`平均 ${res.mean.toFixed(1)}`, toX(res.mean) - 20, by - 16);
+      ctx.fillStyle = '#059669'; ctx.fillText(`中央値 ${res.median.toFixed(1)}`, toX(res.median) - 22, by + bh + 16);
+    },
+    levels: {
+      elem_j1: '1人だけ極端に高い点（外れ値）があると、平均点はつられて上がりますが、真ん中の人の点（中央値）は動きません。',
+      j2_j3: '箱ひげ図の箱の中に「真ん中の50%の人」が入っています。箱の幅（四分位範囲）で散らばりが一目でわかります。',
+      h1: '分散と標準偏差を学ぶことで、テストの点数を「偏差値 = 50 + 10×(点-平均)/標準偏差」として客観的に比較できます。',
+      h2_h3: '多くの自然・社会データは正規分布に従い、平均±1σの範囲に約68%のデータが収まることがわかります。'
+    }
+  },
+  {
+    id: 'dat_prob',
+    field: 'dat',
+    title: '推しライブ当選確率＆ガチャ期待値',
+    unit: '場合の数・確率・余事象・期待値',
+    dailyHook: '当選確率20%のライブに5回応募したら、確率100%で当たる…わけじゃない！？',
+    guidance: 'ガチャの確率表記、保険料の計算、天気予報の降水確率など、不確実な未来を数値で判断する必須スキルです。',
+    rewindIds: ['num_discount'],
+    params: [
+      { key: 'prob', label: '1回あたりの確率 (%)', min: 1, max: 50, step: 1, def: 20 },
+      { key: 'tries', label: '挑戦する回数 (回)', min: 1, max: 30, step: 1, def: 5 }
+    ],
+    compute(v) {
+      const p = v.prob / 100;
+      const winAtLeastOnce = (1 - Math.pow(1 - p, v.tries)) * 100;
+      const expectedTries = 1 / p;
+      return {
+        kpis: [
+          { label: '少なくとも1回当たる確率', val: `${winAtLeastOnce.toFixed(1)}%`, sub: `1 - (外れ確率)^${v.tries}` },
+          { label: '全部ハズレる確率', val: `${(100 - winAtLeastOnce).toFixed(1)}%`, sub: '余事象の考え方' },
+          { label: '当たるまでの平均回数', val: `約${expectedTries.toFixed(1)}回`, sub: '期待値 1/p' }
+        ],
+        winAtLeastOnce, p
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const maxX = 30;
+      const toX = x => pad + (x / maxX) * gw;
+      const toY = y => h - pad - (y / 100) * gh;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      // Bars for tries 1..30
+      for (let t = 1; t <= maxX; t++) {
+        const pct = (1 - Math.pow(1 - res.p, t)) * 100;
+        const bx = toX(t) - (gw / maxX) * 0.35;
+        const bw = (gw / maxX) * 0.7;
+        ctx.fillStyle = t === v.tries ? '#e11d48' : 'rgba(79, 70, 229, 0.35)';
+        ctx.fillRect(bx, toY(pct), bw, (h - pad) - toY(pct));
+      }
+      // 100% dashed line
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = '#cbd5e1';
+      ctx.beginPath(); ctx.moveTo(pad, toY(100)); ctx.lineTo(w - pad, toY(100)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`100%にはならない！（${v.tries}回で ${res.winAtLeastOnce.toFixed(1)}%）`, pad + 8, 24);
+    },
+    levels: {
+      elem_j1: '確率20%を5回やっても20%×5=100%にはなりません。「全部ハズレる確率」を100%から引くのがコツです。',
+      j2_j3: '「少なくとも1回当たる」は「1 - (全部ハズレる確率)」＝余事象を使うと一発で計算できます。',
+      h1: '新指導要領でも重視される「期待値」。1/p 回引けば平均1回当たりますが、確率は独立なので毎回リセットされます。',
+      h2_h3: '反復試行の確率 nCr p^r (1-p)^(n-r) や二項分布を使えば、「2回以上当たる確率」も自在に計算できます。'
+    }
+  },
+  {
+    id: 'dat_stat',
+    field: 'dat',
+    title: 'コインのイカサマ検定（仮説検定）',
+    unit: '標本調査・仮説検定・p値',
+    dailyHook: '10回投げて9回「表」が出たコイン、これって偶然？それとも細工されたイカサマ？',
+    guidance: '新薬が本当に効くか、A/Bテストでどちらのデザインが優れているか、現代のデータ判断の核が「仮説検定」です。',
+    rewindIds: ['dat_prob', 'dat_dist'],
+    params: [
+      { key: 'n', label: '投げた回数 (n)', min: 10, max: 50, step: 5, def: 20 },
+      { key: 'heads', label: '表が出た回数', min: 5, max: 50, step: 1, def: 15 }
+    ],
+    compute(v) {
+      const k = Math.min(v.heads, v.n);
+      // Normal approx z-score for p=0.5
+      const mean = v.n * 0.5;
+      const sd = Math.sqrt(v.n * 0.25);
+      const z = Math.abs(k - mean) / sd;
+      const isWeird = z >= 1.96; // 5% significance level
+      return {
+        kpis: [
+          { label: '普通のコインの期待', val: `${mean}回`, sub: `±${(1.96 * sd).toFixed(1)}回が通常圏` },
+          { label: 'ズレの大きさ (z値)', val: `${z.toFixed(2)} σ`, sub: '1.96超で珍しい(5%以下)' },
+          { label: '検定の判定', val: isWeird ? '怪しい！(棄却)' : '偶然の範囲内', sub: isWeird ? '有意水準5%で異常' : 'イカサマとは言えない' }
+        ],
+        k, mean, sd, z, isWeird
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const toX = x => pad + (x / v.n) * gw;
+      // Normal curve
+      const maxPdf = 1 / (res.sd * Math.sqrt(2 * Math.PI));
+      const toY = pdf => h - pad - (pdf / maxPdf) * gh * 0.85;
+
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      // Highlight 95% normal zone
+      const low = Math.max(0, res.mean - 1.96 * res.sd), high = Math.min(v.n, res.mean + 1.96 * res.sd);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+      ctx.beginPath(); ctx.moveTo(toX(low), h - pad);
+      for (let x = low; x <= high; x += 0.5) {
+        const pdf = Math.exp(-0.5 * Math.pow((x - res.mean) / res.sd, 2)) / (res.sd * Math.sqrt(2 * Math.PI));
+        ctx.lineTo(toX(x), toY(pdf));
+      }
+      ctx.lineTo(toX(high), h - pad); ctx.closePath(); ctx.fill();
+
+      // Bell curve
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = 0; x <= v.n; x += 0.5) {
+        const pdf = Math.exp(-0.5 * Math.pow((x - res.mean) / res.sd, 2)) / (res.sd * Math.sqrt(2 * Math.PI));
+        if (x === 0) ctx.moveTo(toX(x), toY(pdf)); else ctx.lineTo(toX(x), toY(pdf));
+      }
+      ctx.stroke();
+
+      // Observed marker
+      const ox = toX(res.k);
+      ctx.strokeStyle = res.isWeird ? '#e11d48' : '#059669'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(ox, pad + 15); ctx.lineTo(ox, h - pad); ctx.stroke();
+      ctx.fillStyle = res.isWeird ? '#e11d48' : '#059669';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(`結果: ${res.k}回`, Math.min(ox + 6, w - 85), pad + 26);
+    },
+    levels: {
+      elem_j1: '普通のコインならだいたい半分が表になります。極端に偏ったら「偶然じゃないかも？」と疑うことができます。',
+      j2_j3: 'クラス全員に聞かなくても、一部をランダムに選ぶ（標本調査）ことで全体の傾向を予想できます。',
+      h1: '新指導要領の重要単元「仮説検定」。「普通のコインである」と仮定したとき、起きる確率が5%未満なら「怪しい」と判定します。',
+      h2_h3: '「統計的な推測」では、二項分布を正規分布で近似し、信頼区間や有意水準を厳密に計算します。'
+    }
+  },
+
+  // --- 5. 論証 ---
+  {
+    id: 'log_cond',
+    field: 'log',
+    title: '必要条件・十分条件ベン図スイッチ',
+    unit: '集合と命題・必要十分条件',
+    dailyHook: '「東京都民」ならば「日本国民」は正しい？逆は？いつも迷う必要・十分条件を図で一発解決！',
+    guidance: 'プログラミングの if文、法律の条文、契約書の穴を見抜くクリティカルシンキングの土台です。',
+    rewindIds: [],
+    params: [
+      { key: 'pSize', label: '条件Pの広さ (例:東京)', min: 20, max: 110, step: 5, def: 45 },
+      { key: 'qSize', label: '条件Qの広さ (例:日本)', min: 20, max: 110, step: 5, def: 85 }
+    ],
+    compute(v) {
+      let rel = 'どちらも成り立たない';
+      let badge = '関係なし';
+      if (v.pSize < v.qSize) { rel = 'P ⇒ Q が真（PはQの十分条件）'; badge = 'P ⊂ Q'; }
+      else if (v.pSize > v.qSize) { rel = 'Q ⇒ P が真（PはQの必要条件）'; badge = 'Q ⊂ P'; }
+      else { rel = 'P ⇔ Q が真（必要十分条件！）'; badge = 'P = Q'; }
+      return {
+        kpis: [
+          { label: '判定結果', val: badge, sub: rel },
+          { label: 'P ⇒ Q', val: v.pSize <= v.qSize ? '真 (いつも正しい)' : '偽 (反例あり)', sub: '矢印の根元が十分' },
+          { label: 'Q ⇒ P', val: v.qSize <= v.pSize ? '真 (いつも正しい)' : '偽 (反例あり)', sub: '矢印の先が必要' }
+        ]
+      };
+    },
+    draw(ctx, w, h, v) {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2, cy = h / 2, maxR = Math.min(w, h) * 0.4;
+      const rP = (v.pSize / 110) * maxR, rQ = (v.qSize / 110) * maxR;
+      // Draw larger first
+      if (rQ >= rP) {
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.18)'; ctx.strokeStyle = '#10b981'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, rQ, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.25)'; ctx.strokeStyle = '#4f46e5';
+        ctx.beginPath(); ctx.arc(cx, cy, rP, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      } else {
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.18)'; ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, rP, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.25)'; ctx.strokeStyle = '#10b981';
+        ctx.beginPath(); ctx.arc(cx, cy, rQ, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.fillText('P', cx - rP + 8, cy);
+      ctx.fillText('Q', cx + rQ - 20, cy);
+    },
+    levels: {
+      elem_j1: '小さい丸が「大きい丸の中にすっぽり入る」とき、「小さい方なら必ず大きい方」が言えます！',
+      j2_j3: '図形の「正方形 ⇒ 長方形」のように、定義の包含関係が証明の根拠になります。',
+      h1: '「矢印の先が必要条件、根元が十分条件」ですが、ベン図の「小さい方⊂大きい方」で覚えると絶対に間違えません。',
+      h2_h3: '対偶（元の命題と真偽が一致）や背理法と組み合わせることで、複雑な証明問題を論理的に崩せます。'
+    }
+  },
+  {
+    id: 'log_induct',
+    field: 'log',
+    title: 'ドミノ倒し実験（数学的帰納法）',
+    unit: '図形の証明・背理法・数学的帰納法',
+    dailyHook: '無限に並んだドミノが「全部倒れる」ことを、1個ずつ確認せずにどうやって証明する？',
+    guidance: 'コンピュータプログラムが無限の入力に対してバグらないことを保証する「ループ不変条件」と同じ論理構造です。',
+    rewindIds: ['log_cond'],
+    params: [
+      { key: 'first', label: '最初の1個を倒す (1:倒す/0:倒さない)', min: 0, max: 1, step: 1, def: 1 },
+      { key: 'gap', label: 'ドミノの間隔 (小さいほど次が倒れる)', min: 1, max: 3, step: 1, def: 1 },
+      { key: 'step', label: 'どこまで実験で見る？', min: 1, max: 10, step: 1, def: 6 }
+    ],
+    compute(v) {
+      const chainOk = v.gap <= 2;
+      const allFall = v.first === 1 && chainOk;
+      return {
+        kpis: [
+          { label: '① スタート条件 (n=1)', val: v.first ? 'OK (倒れる)' : 'NG (倒れない)', sub: '最初の1個が倒れるか' },
+          { label: '② 連鎖条件 (k→k+1)', val: chainOk ? 'OK (次も倒れる)' : 'NG (届かない！)', sub: '間隔が広すぎると止まる' },
+          { label: '無限に倒れる証明', val: allFall ? '証明完了！' : '証明失敗', sub: allFall ? '①と②の両方が成立' : 'どちらかが欠けている' }
+        ],
+        chainOk, allFall
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const count = 10, startX = 35, stepX = (w - 70) / count;
+      const baseY = h * 0.72;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(20, baseY); ctx.lineTo(w - 20, baseY); ctx.stroke();
+
+      for (let i = 0; i < count; i++) {
+        const x = startX + i * stepX;
+        const fallen = v.first === 1 && (i === 0 || (res.chainOk && i < v.step));
+        ctx.save();
+        ctx.translate(x, baseY);
+        if (fallen) ctx.rotate(1.1);
+        ctx.fillStyle = fallen ? '#4f46e5' : '#cbd5e1';
+        ctx.fillRect(-5, -55, 10, 55);
+        ctx.restore();
+        ctx.fillStyle = '#475569'; ctx.font = '10px Inter, sans-serif';
+        ctx.fillText(`${i + 1}`, x - 3, baseY + 16);
+      }
+      ctx.fillStyle = res.allFall ? '#059669' : '#e11d48';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(res.allFall ? '①n=1が倒れ、②kが倒れればk+1も倒れる → すべて倒れる！' : '①または②が欠けると、ドミノは途中で止まってしまいます', 24, 28);
+    },
+    levels: {
+      elem_j1: '「1番目が倒れる」ことと「どれかが倒れたら必ず次も倒れる」の2つが確認できれば、1億番目まで全部倒れます。',
+      j2_j3: '図形の証明も「前提」から「結論」へドミノのように根拠をつなぐ作業です。',
+      h1: '直接証明しにくいときは「もし成り立たないと仮定すると矛盾する（背理法）」という逆のアプローチも強力です。',
+      h2_h3: '数列の「数学的帰納法」は、n=1 の確認と n=k ⇒ n=k+1 の連鎖を示す、まさにこのドミノの論理です。'
+    }
+  },
+  {
+    id: 'log_algo',
+    field: 'log',
+    title: '迷路の最短ルート＆アルゴリズム論理',
+    unit: '離散数学・論理的思考・情報科連携',
+    dailyHook: 'カーナビやゲームの敵キャラはどうやって「最短ルート」を迷わず見つけているの？',
+    guidance: '新学習指導要領で重視される「数学と情報科の連携」。条件分岐とステップ数の見積もりがアルゴリズムの心臓部です。',
+    rewindIds: ['log_cond', 'log_induct'],
+    params: [
+      { key: 'grid', label: '街のブロック数 (N×N)', min: 2, max: 6, step: 1, def: 4 },
+      { key: 'block', label: '通行止めの位置 (0:なし〜2)', min: 0, max: 2, step: 1, def: 1 }
+    ],
+    compute(v) {
+      // Combinations (2N choose N)
+      const fact = n => (n <= 1 ? 1 : n * fact(n - 1));
+      const totalWays = fact(2 * v.grid) / (fact(v.grid) * fact(v.grid));
+      const m = Math.floor(v.grid / 2);
+      const comb = (n, k) => fact(n) / (fact(k) * fact(n - k));
+      const blockedWays = v.block === 0 ? 0 : comb(2 * m, m) * comb(2 * (v.grid - m), v.grid - m);
+      const validWays = Math.max(1, totalWays - blockedWays);
+      return {
+        kpis: [
+          { label: '最短距離の歩数', val: `${v.grid * 2} ブロック`, sub: 'どの最短ルートでも同じ' },
+          { label: '最短ルートの総数', val: `${validWays} 通り`, sub: `障害物なしなら ${totalWays}通り` },
+          { label: '計算ステップの工夫', val: '動的計画法', sub: '左上から足し算で求める' }
+        ],
+        totalWays, validWays
+      };
+    },
+    draw(ctx, w, h, v) {
+      ctx.clearRect(0, 0, w, h);
+      const n = v.grid, size = Math.min(w - 90, h - 70), cell = size / n;
+      const ox = (w - size) / 2, oy = (h - size) / 2;
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+      for (let i = 0; i <= n; i++) {
+        ctx.beginPath(); ctx.moveTo(ox, oy + i * cell); ctx.lineTo(ox + size, oy + i * cell); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox + i * cell, oy); ctx.lineTo(ox + i * cell, oy + size); ctx.stroke();
+      }
+      // Start & Goal
+      ctx.fillStyle = '#4f46e5'; ctx.beginPath(); ctx.arc(ox, oy, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(ox + size, oy + size, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('S', ox - 14, oy + 4); ctx.fillText('G', ox + size + 10, oy + size + 4);
+
+      // Blocked intersection
+      if (v.block > 0) {
+        const bx = ox + Math.floor(n / 2) * cell, by = oy + Math.floor(n / 2) * cell;
+        ctx.fillStyle = '#e11d48';
+        ctx.fillText('✖通行止', bx - 20, by + 4);
+      }
+      // Sample shortest path
+      ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + size, oy); ctx.lineTo(ox + size, oy + size); ctx.stroke();
+    },
+    levels: {
+      elem_j1: '右と下にしか進めないとき、どの道を通っても合計の歩数は同じになります。交差点ごとに道順を足してみよう！',
+      j2_j3: '「AかつB」「Aではない」などの論理条件を整理すると、通行止めを避ける正しい道順が漏れなく数えられます。',
+      h1: '同じものを含む順列 (2N)! / (N! N!) を使うと、一発で最短経路の総数が計算できます。',
+      h2_h3: '情報科の「アルゴリズム（幅優先探索・動的計画法）」と数学の「場合の数・グラフ理論」が融合する領域です。'
+    }
+  },
+
+  // --- 6. 社会を読み解く数学（新設分野） ---
+  {
+    id: 'soc_matrix',
+    field: 'soc',
+    title: '行列で画像を回転＆拡大（AI・CG）',
+    unit: '行列（新指導要領 統合科目）・線形変換',
+    dailyHook: 'スマホの写真アプリで画像を「回転・傾け・拡大」するとき、裏ではたった4つの数字（行列）が動いてる！',
+    guidance: '次期指導要領で高校数学の重要トピックに復帰する「行列」。3Dゲーム、AIのニューラルネットワーク、画像処理の基本です。',
+    rewindIds: ['geo_vector'],
+    params: [
+      { key: 'scale', label: '拡大率 (%)', min: 50, max: 180, step: 10, def: 120 },
+      { key: 'angle', label: '回転角度 (度)', min: -90, max: 90, step: 15, def: 30 },
+      { key: 'shear', label: '斜め傾き (シアー)', min: -5, max: 5, step: 1, def: 0 }
+    ],
+    compute(v) {
+      const s = v.scale / 100;
+      const rad = (v.angle * Math.PI) / 180;
+      const sh = v.shear * 0.15;
+      const a = s * Math.cos(rad);
+      const b = -s * Math.sin(rad) + sh;
+      const c = s * Math.sin(rad);
+      const d = s * Math.cos(rad);
+      const det = a * d - b * c;
+      return {
+        kpis: [
+          { label: '変換行列 [a b / c d]', val: `[${a.toFixed(2)}, ${b.toFixed(2)}]`, sub: `[${c.toFixed(2)}, ${d.toFixed(2)}]` },
+          { label: '面積の倍率 (行列式)', val: `${Math.abs(det).toFixed(2)}倍`, sub: 'ad - bc の値' },
+          { label: '逆変換できる？', val: Math.abs(det) > 0.01 ? '元に戻せる' : '潰れて戻せない', sub: '逆行列の有無' }
+        ],
+        a, b, c, d
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2, cy = h / 2, unit = Math.min(w, h) * 0.18;
+      // Axes
+      ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(w - 20, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, 20); ctx.lineTo(cx, h - 20); ctx.stroke();
+
+      const pts = [[0, 0], [1, 0], [1, 1], [0, 1]];
+      // Original ghost square
+      ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([4, 4]);
+      ctx.strokeRect(cx, cy - unit, unit, unit);
+      ctx.setLineDash([]);
+
+      // Transformed polygon
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+      ctx.strokeStyle = '#0891b2'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => {
+        const nx = cx + (res.a * x + res.b * y) * unit;
+        const ny = cy - (res.c * x + res.d * y) * unit;
+        if (i === 0) ctx.moveTo(nx, ny); else ctx.lineTo(nx, ny);
+      });
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText('点線：元の画像 → 青：行列変換後', 20, 26);
+    },
+    levels: {
+      elem_j1: '4つの数字の表を使うと、図形をぐるっと回したり、大きくしたり、斜めに引き伸ばしたりできます。',
+      j2_j3: '連立方程式の係数だけを抜き出したものが「行列」の正体です。',
+      h1: '高校で学ぶ「行列」。座標 (x, y) に行列を掛けるだけで、画面上のすべてのピクセルを一斉に動かせます。',
+      h2_h3: '行列式 ad-bc は「面積が何倍になるか」を表し、AIの大量データ計算（テンソル演算）の基礎そのものです。'
+    }
+  },
+  {
+    id: 'soc_sir',
+    field: 'soc',
+    title: '流行・SNS噂のピークアウト予測',
+    unit: '社会を読み解く数学・微分モデル',
+    dailyHook: '流行や感染症はいつピークを迎えて落ち着くの？「基本再生産数」を動かして実験！',
+    guidance: '感染症対策、SNSトレンド予測、新商品の市場浸透率など、社会のダイナミクスを数理モデルで読み解きます。',
+    rewindIds: ['chg_exp_calc'],
+    params: [
+      { key: 'r0', label: '感染力 / 拡散力 (R0)', min: 0.8, max: 4.0, step: 0.2, def: 2.4 },
+      { key: 'vacc', label: '対策・免疫率 (%)', min: 0, max: 80, step: 5, def: 10 }
+    ],
+    compute(v) {
+      const effR = v.r0 * (1 - v.vacc / 100);
+      const herdThreshold = Math.max(0, (1 - 1 / v.r0) * 100);
+      const peakPct = effR <= 1 ? 0 : Math.min(60, (effR - 1) * 15);
+      return {
+        kpis: [
+          { label: '実効再生産数', val: effR.toFixed(2), sub: effR > 1 ? '拡大中 (>1)' : '収束へ (≦1)' },
+          { label: '流行を止める対策率', val: `${herdThreshold.toFixed(0)}%`, sub: '集団免疫のしきい値' },
+          { label: '同時流行のピーク', val: effR <= 1 ? '流行しない' : `人口の約${peakPct.toFixed(0)}%`, sub: '対策で山を低くできる' }
+        ],
+        effR
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      // Simulate simple SIR
+      let S = 1 - v.vacc / 100 - 0.01, I = 0.01, R = v.vacc / 100;
+      const beta = v.r0 * 0.2, gamma = 0.2;
+      const ptsI = [];
+      for (let t = 0; t <= 60; t++) {
+        ptsI.push(I);
+        const dS = -beta * S * I;
+        const dI = beta * S * I - gamma * I;
+        S += dS; I += dI; R += gamma * I;
+      }
+      ctx.fillStyle = 'rgba(225, 29, 72, 0.2)';
+      ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(pad, h - pad);
+      ptsI.forEach((val, t) => {
+        const px = pad + (t / 60) * gw;
+        const py = h - pad - Math.min(1, val * 2.2) * gh;
+        ctx.lineTo(px, py);
+      });
+      ctx.lineTo(w - pad, h - pad); ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ptsI.forEach((val, t) => {
+        const px = pad + (t / 60) * gw;
+        const py = h - pad - Math.min(1, val * 2.2) * gh;
+        if (t === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+      ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.fillText(res.effR > 1 ? '山が高いほど医療・サーバーがパンクする' : '対策効果で流行の波が抑えられています！', pad + 8, pad + 14);
+    },
+    levels: {
+      elem_j1: '1人から2人に広まるなら増え続け、1人未満になれば自然に減っていきます。',
+      j2_j3: '割合「(1 - 1/R0)」を計算するだけで、流行を止めるのに必要な対策の割合が見えてきます。',
+      h1: '新分野「社会を読み解く数学」の代表例。指数関数的な増加が、対象者の減少によってブレーキがかかる様子を学びます。',
+      h2_h3: '微分方程式（SIRモデル）を使い、時間あたりの変化率から未来のピークをシミュレーションします。'
+    }
+  },
+  {
+    id: 'soc_opt',
+    field: 'soc',
+    title: '文化祭模擬店の価格＆利益最大化',
+    unit: '社会を読み解く数学・最適化・線形計画',
+    dailyHook: 'タピオカを安くすればたくさん売れるけど利益が減る…「一番儲かる値段」はいくら？',
+    guidance: '航空券のダイナミックプライシング、物流ルートの最適化など、限られた資源で最大の効果を出す意思決定の数学です。',
+    rewindIds: ['chg_quad', 'num_discount'],
+    params: [
+      { key: 'price', label: '販売価格 (円)', min: 150, max: 600, step: 10, def: 350 },
+      { key: 'cost', label: '1杯の原価 (円)', min: 50, max: 250, step: 10, def: 120 }
+    ],
+    compute(v) {
+      // Demand: 300 - 0.5 * price
+      const sales = Math.max(0, Math.round(300 - 0.5 * v.price));
+      const profitPerCup = v.price - v.cost;
+      const totalProfit = sales * profitPerCup;
+      const optPrice = Math.round((600 + v.cost) / 2);
+      const maxProfit = Math.max(0, Math.round((300 - 0.5 * optPrice) * (optPrice - v.cost)));
+      return {
+        kpis: [
+          { label: '予想売上個数', val: `${sales}杯`, sub: '値上げすると客が減る' },
+          { label: '予想の総利益', val: `${totalProfit.toLocaleString()}円`, sub: `1杯あたり ${profitPerCup}円` },
+          { label: '最強の価格 (最適解)', val: `${optPrice}円`, sub: `最大利益 ${maxProfit.toLocaleString()}円` }
+        ],
+        sales, totalProfit, optPrice, maxProfit
+      };
+    },
+    draw(ctx, w, h, v, res) {
+      ctx.clearRect(0, 0, w, h);
+      const pad = 42, gw = w - pad * 2, gh = h - pad * 2;
+      const maxX = 600, maxY = Math.max(20000, res.maxProfit * 1.2);
+      const toX = x => pad + ((x - 100) / (maxX - 100)) * gw;
+      const toY = y => h - pad - Math.max(0, Math.min(1, y / maxY)) * gh;
+
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+      ctx.strokeStyle = '#10b981'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let p = 100; p <= 600; p += 10) {
+        const prof = Math.max(0, 300 - 0.5 * p) * (p - v.cost);
+        if (p === 100) ctx.moveTo(toX(p), toY(prof)); else ctx.lineTo(toX(p), toY(prof));
+      }
+      ctx.stroke();
+
+      // Optimal peak
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath(); ctx.arc(toX(res.optPrice), toY(res.maxProfit), 6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#b45309'; ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText(`頂点 ${res.optPrice}円`, toX(res.optPrice) - 24, toY(res.maxProfit) - 10);
+
+      // Current price
+      ctx.fillStyle = '#4f46e5';
+      ctx.beginPath(); ctx.arc(toX(v.price), toY(res.totalProfit), 7, 0, Math.PI * 2); ctx.fill();
+    },
+    levels: {
+      elem_j1: '安すぎると利益が少なく、高すぎると誰も買わなくなります。ちょうどいい山の一番高い場所を探します。',
+      j2_j3: '「売れる数」と「1個の利益」を掛け算すると、きれいな放物線（二次関数）のグラフになります。',
+      h1: '二次関数の最大値（頂点）を求めることで、勘に頼らない「データに基づく価格決定」ができます。',
+      h2_h3: '材料の上限などの制約条件が増えると、線形計画法や微分による最適化問題へと発展します。'
+    }
+  }
+];
+
+if (typeof module !== 'undefined' && module.exports) { module.exports = { FIELDS, GRADE_LEVELS, TOPICS }; }
+
+</script>
+<script>
+"use strict";
+/* ===== アプリ本体 ===== */
+(function(){
+  var STORE_KEY = "moshimo.state.v1";
+  var state = {
+    activeTopicId: null,
+    grade: "j2_j3",
+    deviceMode: "auto",
+    params: {},
+    memoText: "",
+    muted: false,
+    exploredIds: []
+  };
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var saved = JSON.parse(raw);
+      if (saved && typeof saved === "object") {
+        if (typeof saved.activeTopicId === "string") state.activeTopicId = saved.activeTopicId;
+        if (typeof saved.grade === "string") state.grade = saved.grade;
+        if (typeof saved.deviceMode === "string") state.deviceMode = saved.deviceMode;
+        if (saved.params && typeof saved.params === "object") state.params = saved.params;
+        if (typeof saved.memoText === "string") state.memoText = saved.memoText;
+        if (typeof saved.muted === "boolean") state.muted = saved.muted;
+        if (Array.isArray(saved.exploredIds)) state.exploredIds = saved.exploredIds.filter(function(x){ return typeof x === "string"; });
+      }
+    }
+  } catch (e) { /* 保存データが読めない場合は初期値で続行 */ }
+
+  var topics = (typeof TOPICS !== "undefined" && Array.isArray(TOPICS)) ? TOPICS : [];
+  var fields = (typeof FIELDS !== "undefined" && Array.isArray(FIELDS)) ? FIELDS : [];
+  var gradeLevels = (typeof GRADE_LEVELS !== "undefined" && Array.isArray(GRADE_LEVELS)) ? GRADE_LEVELS : [
+    { id: "elem_j1", label: "小接続〜中1" },
+    { id: "j2_j3", label: "中2〜中3" },
+    { id: "h1", label: "高1" },
+    { id: "h2_h3", label: "高2〜高3" }
+  ];
+
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function topicById(id) {
+    for (var i = 0; i < topics.length; i++) if (topics[i].id === id) return topics[i];
+    return null;
+  }
+  function fieldById(id) {
+    for (var i = 0; i < fields.length; i++) if (fields[i].id === id) return fields[i];
+    return null;
+  }
+  function activeTopic() {
+    return topicById(state.activeTopicId) || topics[0] || null;
+  }
+  function paramValues(topic) {
+    var vals = {};
+    var savedP = state.params[topic.id] || {};
+    (topic.params || []).forEach(function(p){
+      var v = (typeof savedP[p.key] === "number") ? savedP[p.key] : p.def;
+      if (typeof v !== "number" || isNaN(v)) v = p.def;
+      vals[p.key] = Math.min(p.max, Math.max(p.min, v));
+    });
+    return vals;
+  }
+  function effectiveMode() {
+    if (state.deviceMode === "mobile" || state.deviceMode === "tablet" || state.deviceMode === "pc") return state.deviceMode;
+    var w = window.innerWidth || document.documentElement.clientWidth || 1024;
+    if (w < 768) return "mobile";
+    if (w < 1120) return "tablet";
+    return "pc";
+  }
+
+  /* ===== 効果音（WebAudio・三角波 1318Hz・0.07秒・ゲイン0.1） ===== */
+  var audioCtx = null;
+  function beep() {
+    if (state.muted) return;
+    try {
+      if (!audioCtx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var t = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(1318, t);
+      gain.gain.setValueAtTime(0.1, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + 0.075);
+    } catch (e) {}
+  }
+
+  /* ===== DOM参照 ===== */
+  var $ = function(id){ return document.getElementById(id); };
+  var pillbar = $("pillbar"), tree = $("tree"), topicHead = $("topicHead"),
+      kpiGrid = $("kpiGrid"), sliderBox = $("sliderBox"),
+      gradeSeg = $("gradeSeg"), levelText = $("levelText"),
+      guidanceText = $("guidanceText"), rewindBox = $("rewindBox"),
+      simCanvas = $("simCanvas"), canvasWrap = $("canvasWrap"),
+      sketch = $("sketchCanvas"), memoText = $("memoText"),
+      soundBtn = $("soundBtn"), exploredBadge = $("exploredBadge");
+
+  var lastResult = null;
+
+  function computeActive() {
+    var topic = activeTopic();
+    if (!topic) { lastResult = null; return null; }
+    var vals = paramValues(topic);
+    try { lastResult = topic.compute(vals) || { kpis: [] }; }
+    catch (e) { lastResult = { kpis: [] }; }
+    return { topic: topic, vals: vals, res: lastResult };
+  }
+
+  function drawSim() {
+    var data = computeActive();
+    if (!data) return;
+    var rect = canvasWrap.getBoundingClientRect();
+    var w = Math.max(50, Math.floor(rect.width));
+    var h = Math.max(50, Math.floor(rect.height));
+    if (w < 60 || h < 60) return;
+    var dpr = window.devicePixelRatio || 1;
+    if (simCanvas.width !== Math.round(w * dpr) || simCanvas.height !== Math.round(h * dpr)) {
+      simCanvas.width = Math.round(w * dpr);
+      simCanvas.height = Math.round(h * dpr);
+    }
+    var ctx = simCanvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    try { data.topic.draw(ctx, w, h, data.vals, data.res); } catch (e) {}
+  }
+
+  function renderKpis(res) {
+    kpiGrid.innerHTML = "";
+    (res && res.kpis ? res.kpis : []).forEach(function(k){
+      var div = document.createElement("div");
+      div.className = "kpi";
+      var l = document.createElement("div"); l.className = "k-label"; l.textContent = k.label != null ? String(k.label) : "";
+      var v = document.createElement("div"); v.className = "k-val"; v.textContent = k.val != null ? String(k.val) : "";
+      var s = document.createElement("div"); s.className = "k-sub"; s.textContent = k.sub != null ? String(k.sub) : "";
+      div.appendChild(l); div.appendChild(v); div.appendChild(s);
+      kpiGrid.appendChild(div);
+    });
+  }
+
+  function renderSliders(topic, vals) {
+    sliderBox.innerHTML = "";
+    (topic.params || []).forEach(function(p){
+      var row = document.createElement("div");
+      row.className = "slider-row";
+      var top = document.createElement("div");
+      top.className = "sr-top";
+      var lab = document.createElement("span");
+      lab.className = "sr-label"; lab.textContent = p.label;
+      var val = document.createElement("span");
+      val.className = "sr-val"; val.id = "val_" + p.key;
+      val.textContent = String(vals[p.key]);
+      top.appendChild(lab); top.appendChild(val);
+      var input = document.createElement("input");
+      input.type = "range";
+      input.min = String(p.min); input.max = String(p.max);
+      input.step = String(p.step); input.value = String(vals[p.key]);
+      input.setAttribute("aria-label", p.label);
+      input.addEventListener("input", function(){
+        var v = parseFloat(input.value);
+        if (isNaN(v)) return;
+        if (!state.params[topic.id]) state.params[topic.id] = {};
+        state.params[topic.id][p.key] = v;
+        val.textContent = String(v);
+        save();
+        var data = computeActive();
+        if (data) { renderKpis(data.res); drawSim(); }
+      });
+      row.appendChild(top); row.appendChild(input);
+      sliderBox.appendChild(row);
+    });
+  }
+
+  function levelString(topic) {
+    if (!topic.levels) return "";
+    var lv = topic.levels[state.grade];
+    if (lv == null) {
+      var keys = Object.keys(topic.levels);
+      for (var i = 0; i < gradeLevels.length; i++) {
+        if (topic.levels[gradeLevels[i].id] != null) { lv = topic.levels[gradeLevels[i].id]; break; }
+      }
+      if (lv == null && keys.length) lv = topic.levels[keys[0]];
+    }
+    if (lv == null) return "";
+    if (typeof lv === "string") return lv;
+    if (typeof lv === "object") return lv.text || lv.body || lv.desc || lv.description || lv.title || "";
+    return String(lv);
+  }
+
+  function renderSide(topic) {
+    gradeSeg.innerHTML = "";
+    gradeLevels.forEach(function(g){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = g.label;
+      b.setAttribute("aria-pressed", state.grade === g.id ? "true" : "false");
+      b.addEventListener("click", function(){
+        state.grade = g.id; save();
+        renderSide(activeTopic());
+      });
+      gradeSeg.appendChild(b);
+    });
+    levelText.textContent = levelString(topic);
+    guidanceText.textContent = topic.guidance || "";
+    rewindBox.innerHTML = "";
+    var ids = Array.isArray(topic.rewindIds) ? topic.rewindIds : [];
+    var targets = ids.map(topicById).filter(function(t){ return !!t; });
+    if (!targets.length) {
+      var none = document.createElement("p");
+      none.className = "rewind-none";
+      none.textContent = "この単元がスタート地点です。つまずいたら、まずここに戻って実験し直してみましょう。";
+      rewindBox.appendChild(none);
+    } else {
+      var intro = document.createElement("p");
+      intro.className = "rewind-none";
+      intro.textContent = "つまずいたら、土台になるこちらの単元へ戻れます。";
+      rewindBox.appendChild(intro);
+      targets.forEach(function(t){
+        var f = fieldById(t.field);
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "rewind-btn";
+        b.setAttribute("data-field", t.field);
+        b.textContent = "↩ " + t.title;
+        var small = document.createElement("small");
+        small.textContent = (f ? f.name + "｜" : "") + (t.unit || "");
+        b.appendChild(small);
+        b.addEventListener("click", function(){ selectTopic(t.id, true); });
+        rewindBox.appendChild(b);
+      });
+    }
+  }
+
+  function markExplored(id) {
+    if (state.exploredIds.indexOf(id) === -1) state.exploredIds.push(id);
+    exploredBadge.textContent = state.exploredIds.length + "/" + topics.length + " 実験";
+  }
+
+  function renderNavs() {
+    /* ピルバー（分野ごとに色分け） */
+    pillbar.innerHTML = "";
+    fields.forEach(function(f){
+      var group = document.createElement("div");
+      group.className = "pill-group";
+      group.setAttribute("data-field", f.id);
+      var name = document.createElement("span");
+      name.className = "pg-name"; name.textContent = f.name;
+      group.appendChild(name);
+      topics.filter(function(t){ return t.field === f.id; }).forEach(function(t){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "pill";
+        b.setAttribute("data-field", t.field);
+        b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
+        b.textContent = t.title;
+        if (state.exploredIds.indexOf(t.id) !== -1) {
+          var d = document.createElement("span");
+          d.className = "done"; d.textContent = " ✓";
+          b.appendChild(d);
+        }
+        b.addEventListener("click", function(){ selectTopic(t.id, true); });
+        group.appendChild(b);
+      });
+      pillbar.appendChild(group);
+    });
+    /* ツリーナビ */
+    tree.innerHTML = "";
+    fields.forEach(function(f){
+      var block = document.createElement("div");
+      block.className = "field-block";
+      block.setAttribute("data-field", f.id);
+      var name = document.createElement("div");
+      name.className = "field-name"; name.textContent = f.name;
+      block.appendChild(name);
+      if (f.desc) {
+        var desc = document.createElement("div");
+        desc.className = "field-desc"; desc.textContent = f.desc;
+        block.appendChild(desc);
+      }
+      topics.filter(function(t){ return t.field === f.id; }).forEach(function(t){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "topic-btn";
+        b.setAttribute("data-field", t.field);
+        b.setAttribute("aria-pressed", state.activeTopicId === t.id ? "true" : "false");
+        b.textContent = t.title + (state.exploredIds.indexOf(t.id) !== -1 ? " ✓" : "");
+        var small = document.createElement("small");
+        small.textContent = t.unit || "";
+        b.appendChild(small);
+        b.addEventListener("click", function(){ selectTopic(t.id, true); });
+        block.appendChild(b);
+      });
+      tree.appendChild(block);
+    });
+  }
+
+  function renderTopicHead(topic) {
+    var f = fieldById(topic.field);
+    topicHead.setAttribute("data-field", topic.field);
+    topicHead.innerHTML = "";
+    if (f) {
+      var badge = document.createElement("span");
+      badge.className = "field-badge"; badge.textContent = f.name;
+      topicHead.appendChild(badge);
+    }
+    var h2 = document.createElement("h2");
+    h2.textContent = topic.title || "";
+    topicHead.appendChild(h2);
+    var unit = document.createElement("div");
+    unit.className = "unit"; unit.textContent = topic.unit || "";
+    topicHead.appendChild(unit);
+    if (topic.dailyHook) {
+      var hook = document.createElement("p");
+      hook.className = "hook"; hook.textContent = topic.dailyHook;
+      topicHead.appendChild(hook);
+    }
+  }
+
+  function renderAll() {
+    var topic = activeTopic();
+    if (!topic) {
+      topicHead.innerHTML = "";
+      var p = document.createElement("p");
+      p.textContent = "単元データが読み込めませんでした。";
+      topicHead.appendChild(p);
+      return;
+    }
+    state.activeTopicId = topic.id;
+    markExplored(topic.id);
+    renderNavs();
+    renderTopicHead(topic);
+    var vals = paramValues(topic);
+    renderSliders(topic, vals);
+    var data = computeActive();
+    renderKpis(data ? data.res : null);
+    renderSide(topic);
+    drawSim();
+    ensureSketch();
+  }
+
+  function selectTopic(id, withSound) {
+    if (!topicById(id)) return;
+    state.activeTopicId = id;
+    save();
+    if (withSound) beep();
+    if (effectiveMode() === "mobile") setTab("lab", false);
+    renderAll();
+  }
+
+  function setTab(tab, withSound) {
+    document.body.setAttribute("data-tab", tab);
+    document.querySelectorAll("[data-tab-btn]").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-tab-btn") === tab ? "true" : "false");
+    });
+    if (withSound) beep();
+    if (tab === "memo") ensureSketch();
+    if (tab === "lab") drawSim();
+  }
+
+  /* ===== お絵描きメモ ===== */
+  var sketchReady = false, sketchDrawing = false, sketchLast = null;
+  function sketchCtx() { return sketch.getContext("2d"); }
+  function ensureSketch() {
+    var rect = sketch.getBoundingClientRect();
+    if (rect.width < 10 || rect.height < 10) return;
+    var dpr = window.devicePixelRatio || 1;
+    var w = Math.round(rect.width * dpr), h = Math.round(rect.height * dpr);
+    if (sketch.width === w && sketch.height === h && sketchReady) return;
+    var prev = null;
+    if (sketchReady && sketch.width > 0) {
+      prev = document.createElement("canvas");
+      prev.width = sketch.width; prev.height = sketch.height;
+      prev.getContext("2d").drawImage(sketch, 0, 0);
+    }
+    sketch.width = w; sketch.height = h;
+    var ctx = sketchCtx();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.strokeStyle = "#334155";
+    if (prev) ctx.drawImage(prev, 0, 0, rect.width, rect.height);
+    sketchReady = true;
+  }
+  function sketchPos(ev) {
+    var r = sketch.getBoundingClientRect();
+    return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+  }
+  sketch.addEventListener("pointerdown", function(ev){
+    ensureSketch();
+    sketchDrawing = true;
+    sketchLast = sketchPos(ev);
+    try { sketch.setPointerCapture(ev.pointerId); } catch (e) {}
+    ev.preventDefault();
+  });
+  window.addEventListener("pointermove", function(ev){
+    if (!sketchDrawing) return;
+    var p = sketchPos(ev);
+    var ctx = sketchCtx();
+    ctx.beginPath();
+    ctx.moveTo(sketchLast.x, sketchLast.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    sketchLast = p;
+  });
+  window.addEventListener("pointerup", function(){ sketchDrawing = false; });
+  window.addEventListener("pointercancel", function(){ sketchDrawing = false; });
+  $("clearSketchBtn").addEventListener("click", function(){
+    ensureSketch();
+    var ctx = sketchCtx();
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, sketch.width, sketch.height);
+    ctx.restore();
+  });
+
+  /* ===== ヘッダー操作 ===== */
+  function applyDeviceMode() {
+    document.body.setAttribute("data-device", state.deviceMode);
+    document.querySelectorAll("[data-set-device]").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-set-device") === state.deviceMode ? "true" : "false");
+    });
+  }
+  document.querySelectorAll("[data-set-device]").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.deviceMode = b.getAttribute("data-set-device");
+      save();
+      applyDeviceMode();
+      drawSim();
+      ensureSketch();
+    });
+  });
+  function applySound() {
+    soundBtn.textContent = state.muted ? "音：オフ" : "音：オン";
+    soundBtn.setAttribute("aria-pressed", state.muted ? "false" : "true");
+  }
+  soundBtn.addEventListener("click", function(){
+    state.muted = !state.muted;
+    save();
+    applySound();
+    if (!state.muted) beep();
+  });
+  $("updateBtn").addEventListener("click", function(){
+    var url = new URL(window.location.href);
+    url.searchParams.set("v", "v1.0.0-" + Date.now());
+    window.location.replace(url.toString());
+  });
+  document.querySelectorAll("[data-tab-btn]").forEach(function(b){
+    b.addEventListener("click", function(){ setTab(b.getAttribute("data-tab-btn"), true); });
+  });
+  $("resetParamsBtn").addEventListener("click", function(){
+    var topic = activeTopic();
+    if (!topic) return;
+    delete state.params[topic.id];
+    save();
+    renderAll();
+  });
+  memoText.value = state.memoText || "";
+  memoText.addEventListener("input", function(){
+    state.memoText = memoText.value;
+    save();
+  });
+
+  /* ===== リサイズ対応 ===== */
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function(){ drawSim(); });
+    ro.observe(canvasWrap);
+    var ro2 = new ResizeObserver(function(){ ensureSketch(); });
+    ro2.observe(sketch);
+  }
+  window.addEventListener("resize", function(){ drawSim(); });
+
+  /* ===== 初期化 ===== */
+  if (!gradeLevels.some(function(g){ return g.id === state.grade; })) state.grade = gradeLevels[1] ? gradeLevels[1].id : gradeLevels[0].id;
+  if (["auto", "mobile", "tablet", "pc"].indexOf(state.deviceMode) === -1) state.deviceMode = "auto";
+  applyDeviceMode();
+  applySound();
+  setTab("lab", false);
+  renderAll();
+  save();
+})();
+</script>
+</body>
+</html>
